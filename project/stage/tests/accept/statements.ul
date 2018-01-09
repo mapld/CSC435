@@ -1,0 +1,6 @@
+int main(){
+  int thing;
+  thing = "thing";
+  thing[thing] = thing;
+  return thing;
+}

@@ -1,0 +1,13 @@
+int main(int input){
+  thing[thing];
+  thing(thing);
+  thing(thing[thing]);
+  thing(thing-thing[thing(thing[thing+thing])]);
+  thing + thing;
+  "thing" + what;
+  (thing);
+  thing[thing] + thing;
+  (thing) + (thing);
+  "thing" - (thing[thing-"thing"] + thing);
+  (thing + thing - (thing + thing[thing(thing+thing)]));
+}
