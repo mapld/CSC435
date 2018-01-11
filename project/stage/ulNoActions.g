@@ -25,15 +25,6 @@ public void recoverFromMismatchedSet (IntStream input,
         }
 }
 
-/*
- * This is a subset of the ulGrammar to show you how
- * to make new production rules.
- * You will need to:
- *  - change type to be compoundType and include appropriate productions
- *  - introduce optional formalParameters
- *  - change functionBody to include variable declarations and statements 
- */
-
 program: function+
 	;
 
@@ -43,8 +34,7 @@ function: functionDecl functionBody
 functionDecl: compoundType identifier '(' formalParameters ')'
 	;
 
-formalParameters: (compoundType identifier moreFormals*)
-    |
+formalParameters: (compoundType identifier moreFormals*)?
     ;
 
 moreFormals: ',' compoundType identifier
@@ -77,7 +67,7 @@ elseBlock: (ELSE block)?
 block: '{' statement* '}'
     ;
 
-expr: exprPart exprOP
+expr: exprOP1 ('==' exprOP1)*
     ;
 
 exprPart: identifier |
@@ -87,11 +77,16 @@ exprPart: identifier |
         '(' expr ')'
     ;
 
-exprOP
-    : (OP expr exprOP)?
+exprOP1: exprOP2 ('<' exprOP2)*
     ;
 
-exprList: expr exprMore*
+exprOP2: exprOP3 (('+'|'-') exprOP3)*
+    ;
+
+exprOP3: exprPart ('*' exprPart)*
+    ;
+
+exprList: (expr exprMore*)?
     ;
 
 exprMore: ',' expr
@@ -136,19 +131,16 @@ PRINTLN: 'println'
 RETURN: 'return'
     ;
 
-/* Fixme: add the other types here */
 TYPE	: 'int'|'float'|'char'|'string'|'boolean'|'void'
 	;
-/*
- * FIXME:
- * Change this to match the specification for identifier
- *
- */
+
 ID	: ('_'|'a'..'z'|'A'..'Z')('_'|'a'..'z'|'A'..'Z'|'0'..'9')*
 	;
 
-OP  : ('+'|'-'|'<'|'*'|'==')
+/*
+OP  : ('*'|'+'|'-'|'<'|'==')
     ;
+*/
 
 SCONSTANT : ('"')('_'|'a'..'z'|'A'..'Z'|'0'..'9'|' ')*('"')
     ;

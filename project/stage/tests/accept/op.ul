@@ -1,7 +1,22 @@
-void main(int blah){
-  red - blue;
-  red + blue;
-  dah == bah;
-  seven < six;
-  what * who;
+void main(){
+  int a;
+  int b;
+  int c;
+  boolean d;
+  boolean e;
+  boolean f;
+  
+  a = 1;
+  b = 2;
+  c = a + b;
+  a = c * c;
+  b = c - a;
+
+  d = a < c;
+  e = a == c;
+  f = b < c;
+
+  print d;
+  print e;
+  print f;
 }
