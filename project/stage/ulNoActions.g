@@ -25,7 +25,7 @@ public void recoverFromMismatchedSet (IntStream input,
         }
 }
 
-program: function+
+program: function+ EOF
 	;
 
 function: functionDecl functionBody
@@ -131,7 +131,7 @@ PRINTLN: 'println'
 RETURN: 'return'
     ;
 
-TYPE	: 'int'|'float'|'char'|'string'|'boolean'|'void'
+TYPE: 'int'|'float'|'char'|'string'|'boolean'|'void'
 	;
 
 ID	: ('_'|'a'..'z'|'A'..'Z')('_'|'a'..'z'|'A'..'Z'|'0'..'9')*
@@ -162,6 +162,5 @@ FCONSTANT : ('0'..'9')+('.')('0'..'9')+
 WS      : ( '\t' | ' ' | ('\r' | '\n') )+ { $channel = HIDDEN;}
     ;
 
-
-COMMENT : '//' ~('\r' | '\n')* ('\r' | '\n') { $channel = HIDDEN;}
+COMMENT : '//' ~('\r' | '\n')* ('\r' | '\n' | EOF) { $channel = HIDDEN;}
     ;
