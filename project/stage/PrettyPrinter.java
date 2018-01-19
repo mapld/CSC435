@@ -1,15 +1,8 @@
-/*
- * Compiler.java
- *
- * A starting place for the unamed language compiler for CSC 435/535
- *
- */
-
 import org.antlr.runtime.*;
 import java.io.*;
 import AST.*;
 
-public class Compiler {
+public class PrettyPrinter{
 	public static void main (String[] args) throws Exception {
 		ANTLRInputStream input;
 
@@ -18,7 +11,7 @@ public class Compiler {
 			return;
 		}
 		else {
-      input = new ANTLRInputStream(new FileInputStream(args[0]));
+        input = new ANTLRInputStream(new FileInputStream(args[0]));
 		}
 
 		// The name of the grammar here is "ulNoActions",
@@ -29,7 +22,8 @@ public class Compiler {
 
 		try {
 			Program program = parser.program();
-
+      PrettyPrintVisitor visitor = new PrettyPrintVisitor();
+      visitor.visit(program);
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.

@@ -1,11 +1,11 @@
 #
-GNAME= ulNoActions
+GNAME= ul
 GSRC= $(GNAME).g
 
 all: grammar compiler
 
 grammar: $(GSRCS)
-	java org.antlr.Tool -fo . $(GSRC) 
+	java org.antlr.Tool -fo . $(GSRC)
 
 compiler:
 	javac *.java

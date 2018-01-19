@@ -1,4 +1,9 @@
-grammar ulNoActions;
+grammar ul;
+
+@header{
+    import AST.*;
+    // import Type.*;
+}
 
 @members
 {
@@ -24,10 +29,19 @@ public void recoverFromMismatchedSet (IntStream input,
         }
 }
 
-program: function+ EOF
+program returns [Program p]
+@init
+{
+    p = new Program();
+}
+    : (f=function
+            { p.addFunction(f); }
+       )+ EOF
 	;
 
-function: functionDecl functionBody
+function returns [Function f]
+    : functionDecl functionBody
+        { f = new Function(); }
 	;
 
 functionDecl: compoundType identifier '(' formalParameters ')'
