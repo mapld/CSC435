@@ -2,7 +2,7 @@ grammar ul;
 
 @header{
     import AST.*;
-    // import Type.*;
+    import Type.*;
 }
 
 @members
@@ -40,23 +40,45 @@ program returns [Program p]
 	;
 
 function returns [Function f]
-    : functionDecl functionBody
-        { f = new Function(); }
+    : fd=functionDecl fb=functionBody
+        { f = new Function(fd,fb); }
 	;
 
-functionDecl: compoundType identifier '(' formalParameters ')'
+functionDecl returns [FunctionDecl fd]
+    : ct=compoundType id=identifier '(' pl=formalParameters ')'
+        {
+            fd = new FunctionDecl(ct, id, pl);
+        }
 	;
 
-formalParameters: (compoundType identifier moreFormals*)?
+functionBody returns [FunctionBody fb]
+@init{
+    FunctionBody it = new FunctionBody();
+}
+@after{
+    fb = it;
+}
+    : '{' (vd=varDecl { it.addVarDecl(vd); })* (st=statement)* '}'
+	;
+
+formalParameters returns [ParameterList params]
+@init{
+    ParameterList it = new ParameterList();
+}
+@after{
+    params = it;
+}
+    : (
+        type=compoundType id=identifier { it.add(new Parameter(type,id)); }
+             (param=moreFormals {it.add(param);})*
+      )?
     ;
 
-moreFormals: ',' compoundType identifier
+moreFormals returns [Parameter param]: ',' type=compoundType id=identifier {param = new Parameter(type,id);}
     ;
 
-functionBody: '{' varDecl* statement* '}'
-	;
 
-varDecl: compoundType identifier ';'
+varDecl returns [VarDecl vd]: type=compoundType id=identifier ';' {vd = new VarDecl(type,id);}
     ;
 
 statement
@@ -105,17 +127,16 @@ exprList: (expr exprMore*)?
 exprMore: ',' expr
     ;
 
-compoundType : type |
-        type '[' ICONSTANT ']'
+compoundType returns [Type ct]: t=TYPE
+        { ct = TypeFactory.getType($t.text, $t.line, $t.pos); } |
+        t=TYPE '[' i=ICONSTANT ']'
+        { ct = TypeFactory.getArrayType($t.text, Integer.parseInt($i.text), $t.line, $t.pos); }
     ;
 
 literal: SCONSTANT | ICONSTANT | FCONSTANT | CCONSTANT | TRUE | FALSE
     ;
 
-identifier : ID
-	;
-
-type:	TYPE
+identifier returns [Identifier id]: name=ID { id = new Identifier($name.text, $name.line, $name.pos); }
 	;
 
 /* Lexer */

@@ -23,7 +23,7 @@ public class PrettyPrinter{
 		try {
 			Program program = parser.program();
       PrettyPrintVisitor visitor = new PrettyPrintVisitor();
-      visitor.visit(program);
+      program.accept(visitor);
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.
