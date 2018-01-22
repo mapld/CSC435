@@ -1,6 +1,6 @@
 package AST;
 
-public class Identifier{
+public class Identifier extends Expr{
   public String name;
   int line;
   int pos;

@@ -58,7 +58,7 @@ functionBody returns [FunctionBody fb]
 @after{
     fb = it;
 }
-    : '{' (vd=varDecl { it.addVarDecl(vd); })* (st=statement)* '}'
+    : '{' (vd=varDecl { it.addVarDecl(vd); })* (st=statement{it.addStatement(st);})* '}'
 	;
 
 formalParameters returns [ParameterList params]
@@ -77,16 +77,15 @@ formalParameters returns [ParameterList params]
 moreFormals returns [Parameter param]: ',' type=compoundType id=identifier {param = new Parameter(type,id);}
     ;
 
-
 varDecl returns [VarDecl vd]: type=compoundType id=identifier ';' {vd = new VarDecl(type,id);}
     ;
 
-statement
+statement returns [Statement st]
 options {
     backtrack=true;
 }
     : ';' |
-      identifier '=' expr ';' |
+      id=identifier '=' exp=expr ';' { st = new AssignStatement(id,exp); } |
       identifier '[' expr ']' '=' expr ';' |
       expr ';' |
       IF '(' expr ')' block elseBlock |
@@ -102,23 +101,53 @@ elseBlock: (ELSE block)?
 block: '{' statement* '}'
     ;
 
-expr: exprOP1 ('==' exprOP1)*
+expr returns [Expr exp]
+@init{
+    Expr it = null;
+}
+@after{
+    exp = it;
+}
+    : ex1=exprOP1 {it = ex1;} ('==' ex2=exprOP1 {it = new EqualsExpr(it,ex2); })*
     ;
 
-exprPart: identifier |
+exprPart returns [Expr expr]: id=identifier {expr = id;} |
         literal |
         identifier '[' expr ']' |
         identifier '(' exprList ')' |
         '(' expr ')'
     ;
 
-exprOP1: exprOP2 ('<' exprOP2)*
+exprOP1 returns [Expr exp]
+@init{
+    Expr it = null;
+}
+@after{
+    exp = it;
+}
+    : ex1=exprOP2 {it = ex1;} ('<' ex2=exprOP2 {it = new LessThanExpr(it,ex2); })*
     ;
 
-exprOP2: exprOP3 (('+'|'-') exprOP3)*
+exprOP2 returns [Expr exp]
+@init{
+    Expr it = null;
+}
+@after{
+    exp = it;
+}
+    : ex1=exprOP3 {it=ex1;}
+        (('+' ex2=exprOP3 {it=new AddExpr(it,exp);}) | ('-' ex2=exprOP3){it=new SubtractExpr(it,exp);})*
     ;
 
-exprOP3: exprPart ('*' exprPart)*
+exprOP3 returns [Expr exp]
+@init{
+    Expr it = null;
+}
+@after{
+    exp = it;
+}
+    : ex1=exprPart {it=ex1;}
+        ('*' ex2=exprPart {it = new MultExpr(it,ex2);})*
     ;
 
 exprList: (expr exprMore*)?

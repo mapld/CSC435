@@ -46,6 +46,9 @@ public class PrettyPrintVisitor implements Visitor{
     for(int i = 0; i < fb.numVars(); i++){
       fb.varAt(i).accept(this);
     }
+    for(int i = 0; i < fb.numStatements(); i++){
+      fb.statementAt(i).accept(this);
+    }
     return null;
   }
   public Object visit(Type type){
@@ -71,12 +74,35 @@ public class PrettyPrintVisitor implements Visitor{
     }
     return null;
   }
-  public Object visit(VarDecl vd){
+  public Object visit(VarDecl varDecl){
     indentLine();
-    vd.type.accept(this);
+    varDecl.type.accept(this);
     builder.append(" ");
-    vd.id.accept(this);
+    varDecl.id.accept(this);
     builder.append(";");
+    return null;
+  }
+  public Object visit(AssignStatement assignStatement){
+    indentLine();
+    assignStatement.id.accept(this);
+    builder.append(" = ");
+    assignStatement.expr.accept(this);
+    builder.append(";");
+    return null;
+  }
+  public Object visit(EqualsExpr equalsExpr){
+    return null;
+  }
+  public Object visit(LessThanExpr lessThanExpr){
+    return null;
+  }
+  public Object visit(AddExpr lessThanExpr){
+    return null;
+  }
+  public Object visit(SubtractExpr lessThanExpr){
+    return null;
+  }
+  public Object visit(MultExpr multExpr){
     return null;
   }
 }

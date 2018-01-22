@@ -8,6 +8,7 @@ public class FunctionBody{
 
   public FunctionBody(){
     vars = new ArrayList<VarDecl>();
+    statements = new ArrayList<Statement>();
   }
   public void accept(Visitor v){
     v.visit(this);
@@ -20,5 +21,14 @@ public class FunctionBody{
   }
   public int numVars(){
     return vars.size();
+  }
+  public void addStatement(Statement statement){
+    statements.add(statement);
+  }
+  public Statement statementAt(int index){
+    return statements.get(index);
+  }
+  public int numStatements(){
+    return statements.size();
   }
 }
