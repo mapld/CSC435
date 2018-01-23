@@ -1,0 +1,16 @@
+apply plugin: 'java'
+sourceSets {
+   main {
+      java {
+         srcDir 'stage'
+      }
+   }
+}
+
+repositories {
+   jcenter()
+}
+
+dependencies{
+    compile files('/home/alrehn/dev/CSC435/libs/antlr-3.0.1/lib/antlr-3.0.1.jar', '/home/alrehn/dev/CSC435/libs/antlr-3.0.1/lib/antlr-runtime-3.0.1.jar')
+}
