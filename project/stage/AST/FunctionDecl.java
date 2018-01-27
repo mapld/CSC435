@@ -1,7 +1,7 @@
 package AST;
 import Type.*;
 
-public class FunctionDecl{
+public class FunctionDecl extends ASTNode{
   Type type;
   Identifier id;
   ParameterList params;

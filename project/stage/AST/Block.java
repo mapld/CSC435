@@ -2,25 +2,13 @@ package AST;
 
 import java.util.*;
 
-public class FunctionBody extends ASTNode{
-  ArrayList<VarDecl> vars;
+public class Block extends ASTNode{
   ArrayList<Statement> statements;
-
-  public FunctionBody(){
-    vars = new ArrayList<VarDecl>();
+  public Block(){
     statements = new ArrayList<Statement>();
   }
   public void accept(Visitor v){
     v.visit(this);
-  }
-  public void addVarDecl(VarDecl vd){
-    vars.add(vd);
-  }
-  public VarDecl varAt(int index){
-    return vars.get(index);
-  }
-  public int numVars(){
-    return vars.size();
   }
   public void addStatement(Statement statement){
     statements.add(statement);

@@ -3,7 +3,7 @@ import Type.*;
 
 import java.util.*;
 
-public class Parameter{
+public class Parameter extends ASTNode{
   public Type type;
   public Identifier id;
 

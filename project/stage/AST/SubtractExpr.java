@@ -1,8 +1,8 @@
 package AST;
 
 public class SubtractExpr extends Expr{
-  Expr left;
-  Expr right;
+  public Expr left;
+  public Expr right;
   public SubtractExpr(Expr left, Expr right){
     this.left = left;
     this.right = right;

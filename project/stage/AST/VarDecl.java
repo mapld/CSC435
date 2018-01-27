@@ -2,7 +2,7 @@ package AST;
 
 import Type.*;
 
-public class VarDecl{
+public class VarDecl extends ASTNode{
   public Type type;
   public Identifier id;
   public VarDecl(Type type, Identifier id){

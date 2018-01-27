@@ -86,20 +86,34 @@ options {
 }
     : ';' |
       id=identifier '=' exp=expr ';' { st = new AssignStatement(id,exp); } |
-      identifier '[' expr ']' '=' expr ';' |
-      expr ';' |
-      IF '(' expr ')' block elseBlock |
-      WHILE '(' expr ')' block |
-      PRINT expr ';' |
-      PRINTLN expr ';' |
-      RETURN (expr)? ';'
+      id=identifier '[' exp=expr ']' '=' exp2=expr ';' {st = new ArrayAssignStatement(id,exp,exp2);} |
+      exp=expr ';' {st=new ExprStatement(exp);} |
+      IF '(' exp=expr ')' bl=block ebl=elseBlock {return new IfStatement(exp,bl,ebl);} |
+      WHILE '(' exp=expr ')' bl=block { st = new WhileStatement(exp,bl);} |
+      PRINT exp=expr ';' {st = new PrintStatement(exp);}|
+      PRINTLN exp=expr ';' {st = new PrintlnStatement(exp);} |
+      RETURN (exp=expr)? ';' {st = new ReturnStatement(exp);}
       ;
 
-elseBlock: (ELSE block)?
+elseBlock returns [Block block]
+@init{
+    Block it = null;
+}
+@after{
+    block = it;
+}
+    : (ELSE bl=block{it=bl;})?
     ;
 
-block: '{' statement* '}'
-    ;
+block returns [Block block]
+@init{
+    Block it = new Block();
+}
+@after{
+    block = it;
+}
+    : '{' (st=statement{it.addStatement(st);})* '}'
+  ;
 
 expr returns [Expr exp]
 @init{
@@ -111,11 +125,12 @@ expr returns [Expr exp]
     : ex1=exprOP1 {it = ex1;} ('==' ex2=exprOP1 {it = new EqualsExpr(it,ex2); })*
     ;
 
-exprPart returns [Expr expr]: id=identifier {expr = id;} |
-        literal |
-        identifier '[' expr ']' |
-        identifier '(' exprList ')' |
-        '(' expr ')'
+exprPart returns [Expr expr]:
+        id=identifier {expr = id;} |
+        l=literal {expr = l;} |
+        id=identifier '[' exp=expr ']' {expr = new ArrayReference(id,exp);} |
+        id=identifier '(' el=exprList ')' {expr = new FunctionCall(id,el);} |
+        '(' e=expr ')' { expr = new ParenExpr(e); }
     ;
 
 exprOP1 returns [Expr exp]
@@ -136,7 +151,7 @@ exprOP2 returns [Expr exp]
     exp = it;
 }
     : ex1=exprOP3 {it=ex1;}
-        (('+' ex2=exprOP3 {it=new AddExpr(it,exp);}) | ('-' ex2=exprOP3){it=new SubtractExpr(it,exp);})*
+        (('+' ex2=exprOP3 {it=new AddExpr(it,ex2);}) | ('-' ex2=exprOP3){it=new SubtractExpr(it,ex2);})*
     ;
 
 exprOP3 returns [Expr exp]
@@ -150,10 +165,17 @@ exprOP3 returns [Expr exp]
         ('*' ex2=exprPart {it = new MultExpr(it,ex2);})*
     ;
 
-exprList: (expr exprMore*)?
+exprList returns [ExprList exprs]
+@init{
+    ExprList it = new ExprList();
+}
+@after{
+    exprs = it;
+}
+    : (e=expr {it.add(e);} (em=exprMore {it.add(em);})*)?
     ;
 
-exprMore: ',' expr
+exprMore returns [Expr expr]: ',' e=expr {expr=e;}
     ;
 
 compoundType returns [Type ct]: t=TYPE
@@ -162,7 +184,13 @@ compoundType returns [Type ct]: t=TYPE
         { ct = TypeFactory.getArrayType($t.text, Integer.parseInt($i.text), $t.line, $t.pos); }
     ;
 
-literal: SCONSTANT | ICONSTANT | FCONSTANT | CCONSTANT | TRUE | FALSE
+literal returns [Literal literal]:
+        s=SCONSTANT {literal = new StringLiteral($s.text, $s.line, $s.pos);} |
+        i=ICONSTANT {literal = new IntegerLiteral(Integer.parseInt($i.text), $i.line, $i.pos);}|
+        f=FCONSTANT {literal = new FloatLiteral(Float.parseFloat($f.text), $f.line, $f.pos);}|
+        c=CCONSTANT {literal = new CharLiteral($c.text, $c.line, $c.pos);}|
+        b=TRUE {literal = new BooleanLiteral(true,$b.line,$b.pos);}|
+        b=FALSE {literal = new BooleanLiteral(false,$b.line,$b.pos);}
     ;
 
 identifier returns [Identifier id]: name=ID { id = new Identifier($name.text, $name.line, $name.pos); }

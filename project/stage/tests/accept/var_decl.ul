@@ -1,9 +1,0 @@
-void main(){
-  int thing;
-  void thing2;
-  float thing3;
-  char thing4;
-  string thing5;
-  boolean thing6;
-  thing = other;
-}
