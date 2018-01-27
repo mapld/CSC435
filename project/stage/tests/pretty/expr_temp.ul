@@ -1,0 +1,17 @@
+
+void main ()
+{
+
+    thing[thing];
+    thing(thing);
+    thing(thing[thing]);
+    thing(thing-thing[thing(thing[thing+thing])]);
+    thing+thing;
+    "thing"+what;
+    (thing);
+    thing[thing]+thing;
+    (thing)+(thing);
+    "thing"-(thing[thing-"thing"]+thing);
+    (thing+thing-(thing+thing[thing(thing+thing)]));
+}
+

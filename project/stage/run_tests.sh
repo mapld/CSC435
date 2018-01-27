@@ -60,11 +60,28 @@ fi
 
 echo -e "${GREEN}Rejected $reject_counter tests properly $REJECT_FAIL"
 
-if [ $fail_counter -eq 0 -a $reject_fail_counter -eq 0 ]
+echo -e "${BLUE}Matching pretty print results against originals"
+
+pretty_counter=0
+pretty_fail_counter=0
+for f in tests/pretty/*.ul
+do
+    OUTPUT="$(java PrettyPrinter $f | diff $f - 2>&1)"
+    if [ -z "$OUTPUT" ]
+    then
+        pretty_counter=$((success_counter+1))
+        echo -e "${GREEN}Pretty print matches $f"
+    else
+        pretty_fail_counter=$((fail_counter+1))
+        echo -e "${RED}Mismatch in pretty print for $f"
+        echo -e "${RED}${OUTPUT}"
+    fi
+done
+
+if [ $fail_counter -eq 0 -a $reject_fail_counter -eq 0 -a $pretty_fail_counter -eq 0 ]
 then
     echo -e "${BLUE}Tests ran - ${GREEN}Success!"
 else
     echo -e "${BLUE}Tests ran - ${RED}Failed"
 fi
-
 

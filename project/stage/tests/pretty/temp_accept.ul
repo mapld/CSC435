@@ -1,0 +1,15 @@
+
+int main ()
+{
+    void a;
+    void b;
+    int c;
+    boolean d;
+    string f;
+
+    f="abcd";
+    c=f;
+    b=f;
+    f='a';
+}
+

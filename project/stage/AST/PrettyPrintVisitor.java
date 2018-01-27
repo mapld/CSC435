@@ -24,14 +24,13 @@ public class PrettyPrintVisitor implements Visitor{
     return null;
   }
   public Object visit(Function f){
-    indentLine();
     f.functionDecl.accept(this);
     indentLine();
     builder.append("{");
     indentation += indentLevel;
     f.functionBody.accept(this);
     indentation -= indentLevel;
-    builder.append("\n}");
+    builder.append("\n}\n");
     return null;
   }
   public Object visit(FunctionDecl fd){

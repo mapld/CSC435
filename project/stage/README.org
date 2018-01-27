@@ -1,2 +1,6 @@
-* CSC435 Assignment 1 Part 1
-run_tests.sh runs make and all test cases
+* CSC435 Assignment 1
+Commands:
+- make to build
+- java Compiler filename.ul to compile a ul file
+- java PrettyPrinter filename.ul to pretty print a ul file using the compiler
+- run_tests.sh runs make and all test cases

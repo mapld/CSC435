@@ -58,7 +58,11 @@ functionBody returns [FunctionBody fb]
 @after{
     fb = it;
 }
-    : '{' (vd=varDecl { it.addVarDecl(vd); })* (st=statement{it.addStatement(st);})* '}'
+    : '{' (vd=varDecl { it.addVarDecl(vd); })* (st=statement{
+            if(st != null){
+                it.addStatement(st);
+            }
+                                                })* '}'
 	;
 
 formalParameters returns [ParameterList params]
