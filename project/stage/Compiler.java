@@ -29,7 +29,8 @@ public class Compiler {
 
 		try {
 			Program program = parser.program();
-
+      TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor();
+      program.accept(typeCheckVisitor);
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.
