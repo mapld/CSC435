@@ -1,11 +1,11 @@
 package Semantic;
 
-public class SemanticException extends RuntimeException{
+public class SemanticError{
     String	message;
     int	line;
     int	offset;
 
-    public SemanticException(String msg, int l, int o){
+    public SemanticError(String msg, int l, int o){
         message = msg;
         line = l;
         offset = o;

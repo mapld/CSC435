@@ -3,23 +3,32 @@ import Type.*;
 
 public class TypeFactory{
   public static Type getType(String typeString, int line, int pos){
+    Type type;
     switch(typeString){
       case "int":
-        return new IntegerType();
+        type = new IntegerType();
+        break;
       case "boolean":
-        return new BooleanType();
+        type = new BooleanType();
+        break;
       case "float":
-        return new FloatType();
+        type = new FloatType();
+        break;
       case "char":
-        return new CharType();
+        type = new CharType();
+        break;
       case "string":
-        return new StringType();
+        type = new StringType();
+        break;
       case "void":
-        return new VoidType();
+        type = new VoidType();
+        break;
       default:
         System.out.println("Error: invalid type at line " + line + ", pos " + pos);
         return null;
     }
+    type.addPositionalInfo(line, pos);
+    return type;
   }
   public static ArrayType getArrayType(String typeString, int size, int line, int pos){
     Type baseType = getType(typeString, line, pos);
