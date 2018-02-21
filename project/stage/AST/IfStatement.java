@@ -9,7 +9,7 @@ public class IfStatement extends Statement{
     this.ifBlock = ifBlock;
     this.elseBlock = elseBlock;
   }
-  public void accept(Visitor v){
-    v.visit(this);
+  public Object accept(Visitor v){
+    return v.visit(this);
   }
 }

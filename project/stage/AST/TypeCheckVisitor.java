@@ -2,12 +2,107 @@ package AST;
 import Semantic.*;
 import Type.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ArrayList;
 
 public class TypeCheckVisitor implements Visitor{
   class FunctionHandle{
     public FunctionDecl fd;
   };
+
+  class TypeExprTable{
+    HashMap<String,Integer> typeIndices;
+    HashMap<String,Integer> operationIndices;
+    // operation, then lhs, then rhs
+    ArrayList<List<List<Type>>> typeOperationTable;
+
+    public void addTypeMapping(String operation, String leftType, String rightType, Type resultType){
+      int operationIndex = operationIndices.get(operation);
+      int leftTypeIndex = typeIndices.get(leftType);
+      int rightTypeIndex = typeIndices.get(rightType);
+
+      typeOperationTable.get(operationIndex).get(leftTypeIndex).set(rightTypeIndex, resultType);
+    }
+
+    public Type getTypeMapping(String operation, String leftType, String rightType){
+      int operationIndex = operationIndices.get(operation);
+      int leftTypeIndex = typeIndices.get(leftType);
+      int rightTypeIndex = typeIndices.get(rightType);
+
+      return typeOperationTable.get(operationIndex).get(leftTypeIndex).get(rightTypeIndex);
+    }
+
+    public TypeExprTable(){
+      Type intType = new IntegerType();
+      Type floatType = new FloatType();
+      Type charType = new CharType();
+      Type stringType = new StringType();
+      Type booleanType = new BooleanType();
+      Type voidType = new VoidType();
+
+      typeIndices = new HashMap<String,Integer>();
+      typeIndices.put(intType.toShortString(), 0);
+      typeIndices.put(floatType.toShortString(), 1);
+      typeIndices.put(charType.toShortString(), 2);
+      typeIndices.put(stringType.toShortString(), 3);
+      typeIndices.put(booleanType.toShortString(), 4);
+      typeIndices.put(voidType.toShortString(), 5);
+
+      operationIndices = new HashMap<String,Integer>();
+      operationIndices.put("+", 0);
+      operationIndices.put("-", 1);
+      operationIndices.put("*", 2);
+      operationIndices.put("<", 3);
+      operationIndices.put("==", 4);
+
+      int operationCount = operationIndices.size();
+      int typeCount = typeIndices.size();
+
+      typeOperationTable = new ArrayList<List<List<Type>>>();
+      for(int i = 0; i < operationCount; i++){
+        ArrayList<List<Type>> table = new ArrayList<List<Type>>();
+        for(int j = 0; j < typeCount; j++){
+          ArrayList<Type> types = new ArrayList<Type>();
+          for(int k = 0; k < typeCount; k++){
+            types.add(null);
+          }
+          table.add(types);
+        }
+        typeOperationTable.add(table);
+      }
+
+      // +
+      addTypeMapping("+", intType.toShortString(), intType.toShortString(), intType);
+      addTypeMapping("+", floatType.toShortString(), floatType.toShortString(), floatType);
+      addTypeMapping("+", charType.toShortString(), charType.toShortString(), charType);
+      addTypeMapping("+", stringType.toShortString(), stringType.toShortString(), stringType);
+
+      // -
+      addTypeMapping("-", intType.toShortString(), intType.toShortString(), intType);
+      addTypeMapping("-", floatType.toShortString(), floatType.toShortString(), floatType);
+      addTypeMapping("-", charType.toShortString(), charType.toShortString(), charType);
+
+      // *
+      addTypeMapping("*", intType.toShortString(), intType.toShortString(), intType);
+      addTypeMapping("*", floatType.toShortString(), floatType.toShortString(), floatType);
+
+      // <
+      addTypeMapping("<", intType.toShortString(), intType.toShortString(), booleanType);
+      addTypeMapping("<", floatType.toShortString(), floatType.toShortString(), booleanType);
+      addTypeMapping("<", charType.toShortString(), charType.toShortString(), booleanType);
+      addTypeMapping("<", stringType.toShortString(), stringType.toShortString(), booleanType);
+      addTypeMapping("<", booleanType.toShortString(), booleanType.toShortString(), booleanType);
+
+      // ==
+      addTypeMapping("==", intType.toShortString(), intType.toShortString(), booleanType);
+      addTypeMapping("==", floatType.toShortString(), floatType.toShortString(), booleanType);
+      addTypeMapping("==", charType.toShortString(), charType.toShortString(), booleanType);
+      addTypeMapping("==", stringType.toShortString(), stringType.toShortString(), booleanType);
+      addTypeMapping("==", booleanType.toShortString(), booleanType.toShortString(), booleanType);
+    }
+  };
+
+  TypeExprTable typeExprTable;
   HashMap<String, FunctionHandle> ftable;
   HashMap<String, Type> vtable;
   ArrayList<SemanticError> semanticErrors;
@@ -23,6 +118,7 @@ public class TypeCheckVisitor implements Visitor{
   }
 
   public Boolean visit(Program p){
+    typeExprTable = new TypeExprTable();
     semanticErrors = new ArrayList<SemanticError>();
     ftable = new HashMap<String, FunctionHandle>();
     for(int i = 0; i < p.size(); i++){
@@ -56,6 +152,7 @@ public class TypeCheckVisitor implements Visitor{
     }
     return false;
   }
+
   public Type visit(Function f){
     // initialize vtable for function scope
     vtable = new HashMap<String, Type>();
@@ -63,6 +160,7 @@ public class TypeCheckVisitor implements Visitor{
     f.functionBody.accept(this);
     return functionType;
   }
+
   public Type visit(FunctionDecl fd){
     FunctionHandle functionHandle = new FunctionHandle();
     functionHandle.fd = fd;
@@ -73,18 +171,32 @@ public class TypeCheckVisitor implements Visitor{
     fd.params.accept(this);
     return fd.type;
   }
+
   public Object visit(FunctionBody fb){
     for(int i = 0; i < fb.numVars(); i++){
       fb.varAt(i).accept(this);
     }
+    for(int i = 0; i < fb.numStatements(); i++){
+      fb.statementAt(i).accept(this);
+    }
     return null;
   }
-  public Object visit(Type ct){return null;}
-  public Object visit(Identifier id){return null;}
+
+  public Object visit(Type ct){return ct;}
+
+  public Object visit(Identifier id){
+    if(!vtable.containsKey(id.name)){
+      semanticErrors.add(new SemanticError("reference to undefined variable " + id.name, id.line, id.pos));
+      return null;
+    }
+    return vtable.get(id.name);
+  }
+
   public Object visit(Parameter param){
     setVariable(param.id, param.type);
     return null;
   }
+
   public Object visit(ParameterList params){
     for(int i = 0; i < params.size(); i++){
       System.out.println("test");
@@ -92,31 +204,112 @@ public class TypeCheckVisitor implements Visitor{
     }
     return null;
   }
+
   public Object visit(VarDecl vd){
     setVariable(vd.id, vd.type);
     return null;
   }
-  public Object visit(AssignStatement assignStatement){return null;}
-  public Object visit(ArrayAssignStatement assignStatement){return null;}
-  public Object visit(ExprStatement exprStatement){return null;}
+
+  public Object visit(AssignStatement assignStatement){
+    if(!vtable.containsKey(assignStatement.id.name)){
+      semanticErrors.add(new SemanticError("assignment to undefined variable " + assignStatement.id.name, assignStatement.id.line, assignStatement.id.pos));
+      return null;
+    }
+    Type lType = vtable.get(assignStatement.id.name);
+    Type rType = (Type)assignStatement.expr.accept(this);
+    if(rType != null && !lType.equals(rType)){
+      semanticErrors.add(new SemanticError("Type mismatch in assign statement, cannot convert " + rType.toShortString() + " to " + lType.toShortString(), assignStatement.id.line, assignStatement.id.pos));
+    }
+    return null;
+  }
+  public Object visit(ArrayAssignStatement assignStatement){
+    return null;
+  }
+  public Object visit(ExprStatement exprStatement){
+    return null;
+  }
+
   public Object visit(IfStatement ifStatement){return null;}
   public Object visit(WhileStatement whileStatement){return null;}
   public Object visit(PrintStatement printStatement){return null;}
   public Object visit(PrintlnStatement printlnStatement){return null;}
   public Object visit(ReturnStatement returnStatement){return null;}
   public Object visit(Block block){return null;}
-  public Object visit(EqualsExpr equalsExpr){return null;}
-  public Object visit(LessThanExpr lessThanExpr){return null;}
-  public Object visit(AddExpr lessThanExpr){return null;}
-  public Object visit(SubtractExpr lessThanExpr){return null;}
-  public Object visit(MultExpr multExpr){return null;}
-  public Object visit(StringLiteral stringLiteral){return null;}
-  public Object visit(CharLiteral stringLiteral){return null;}
-  public Object visit(IntegerLiteral stringLiteral){return null;}
-  public Object visit(FloatLiteral floatLiteral){return null;}
-  public Object visit(BooleanLiteral booleanLiteral){return null;}
+
+  public Object visit(EqualsExpr expr){
+    String operator = "==";
+    Type lType = (Type)expr.left.accept(this);
+    Type rType = (Type)expr.right.accept(this);
+    if(lType == null || rType == null){
+      return null;
+    }
+    Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
+    }
+    return resultType;
+  }
+  public Object visit(LessThanExpr expr){
+    String operator = "<";
+    Type lType = (Type)expr.left.accept(this);
+    Type rType = (Type)expr.right.accept(this);
+    if(lType == null || rType == null){
+      return null;
+    }
+    Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
+    }
+    return resultType;
+  }
+  public Object visit(AddExpr expr){
+    String operator = "+";
+    Type lType = (Type)expr.left.accept(this);
+    Type rType = (Type)expr.right.accept(this);
+    if(lType == null || rType == null){
+      return null;
+    }
+    Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
+    }
+    return resultType;
+  }
+  public Object visit(SubtractExpr expr){
+    String operator = "-";
+    Type lType = (Type)expr.left.accept(this);
+    Type rType = (Type)expr.right.accept(this);
+    if(lType == null || rType == null){
+      return null;
+    }
+    Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
+    }
+    return resultType;
+  }
+  public Object visit(MultExpr expr){
+    String operator = "*";
+    Type lType = (Type)expr.left.accept(this);
+    Type rType = (Type)expr.right.accept(this);
+    if(lType == null || rType == null){
+      return null;
+    }
+    Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
+    }
+    return resultType;
+  }
+
+  public Object visit(StringLiteral stringLiteral){return new StringType();}
+  public Object visit(CharLiteral charLiteral){return new CharType();}
+  public Object visit(IntegerLiteral integerLiteral){return new IntegerType();}
+  public Object visit(FloatLiteral floatLiteral){return new FloatType();}
+  public Object visit(BooleanLiteral booleanLiteral){return new BooleanType();}
+
   public Object visit(ArrayReference arrayReference){return null;}
   public Object visit(FunctionCall functionCall){return null;}
   public Object visit(ExprList exprList){return null;}
-  public Object visit(ParenExpr parenExpr){return null;}
+  public Object visit(ParenExpr parenExpr){return parenExpr.innerExpr.accept(this);}
 }

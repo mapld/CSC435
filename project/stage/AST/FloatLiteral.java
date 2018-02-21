@@ -5,7 +5,7 @@ public class FloatLiteral extends Literal{
     public FloatLiteral(float s, int line, int pos){
         value = s;
     }
-    public void accept(Visitor v){
-        v.visit(this);
+    public Object accept(Visitor v){
+        return v.visit(this);
     }
 }

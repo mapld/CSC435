@@ -5,7 +5,7 @@ public class StringLiteral extends Literal{
     public StringLiteral(String s, int line, int pos){
         value = s.substring(1,s.length()-1);
     }
-    public void accept(Visitor v){
-        v.visit(this);
+    public Object accept(Visitor v){
+        return v.visit(this);
     }
 }

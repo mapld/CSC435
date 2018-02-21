@@ -126,8 +126,8 @@ expr returns [Expr exp]
 @after{
     exp = it;
 }
-    : ex1=exprOP1 {it = ex1;} ('==' ex2=exprOP1 {it = new EqualsExpr(it,ex2); })*
-    ;
+    : ex1=exprOP1 {it = ex1;} (o='==' ex2=exprOP1 {it = new EqualsExpr(it,ex2,$o.line,$o.pos); })*
+  ;
 
 exprPart returns [Expr expr]:
         id=identifier {expr = id;} |
@@ -144,7 +144,7 @@ exprOP1 returns [Expr exp]
 @after{
     exp = it;
 }
-    : ex1=exprOP2 {it = ex1;} ('<' ex2=exprOP2 {it = new LessThanExpr(it,ex2); })*
+    : ex1=exprOP2 {it = ex1;} (o='<' ex2=exprOP2 {it = new LessThanExpr(it,ex2, $o.line,$o.pos); })*
     ;
 
 exprOP2 returns [Expr exp]
@@ -155,7 +155,7 @@ exprOP2 returns [Expr exp]
     exp = it;
 }
     : ex1=exprOP3 {it=ex1;}
-        (('+' ex2=exprOP3 {it=new AddExpr(it,ex2);}) | ('-' ex2=exprOP3){it=new SubtractExpr(it,ex2);})*
+        ((o='+' ex2=exprOP3 {it=new AddExpr(it,ex2,$o.line,$o.pos);}) | (o='-' ex2=exprOP3){it=new SubtractExpr(it,ex2,$o.line, $o.pos);})*
     ;
 
 exprOP3 returns [Expr exp]
@@ -166,7 +166,7 @@ exprOP3 returns [Expr exp]
     exp = it;
 }
     : ex1=exprPart {it=ex1;}
-        ('*' ex2=exprPart {it = new MultExpr(it,ex2);})*
+        (o='*' ex2=exprPart {it = new MultExpr(it,ex2,$o.line,$o.pos);})*
     ;
 
 exprList returns [ExprList exprs]
@@ -228,6 +228,15 @@ RETURN: 'return'
 
 TYPE: 'int'|'float'|'char'|'string'|'boolean'|'void'
 	;
+
+/*
+EQUALITY: '==';
+ADD: '+';
+SUBTRACT: '-';
+LESSTHAN: '<';
+MULTIPLY: '*';
+*/
+
 
 ID	: ('_'|'a'..'z'|'A'..'Z')('_'|'a'..'z'|'A'..'Z'|'0'..'9')*
 	;

@@ -5,7 +5,7 @@ public class ReturnStatement extends Statement{
   public ReturnStatement(Expr expr){
     this.expr = expr;
   }
-  public void accept(Visitor v){
-    v.visit(this);
+  public Object accept(Visitor v){
+    return v.visit(this);
   }
 }

@@ -5,7 +5,7 @@ public class IntegerLiteral extends Literal{
     public IntegerLiteral(int s, int line, int pos){
         value = s;
     }
-    public void accept(Visitor v){
-        v.visit(this);
+    public Object accept(Visitor v){
+        return v.visit(this);
     }
 }

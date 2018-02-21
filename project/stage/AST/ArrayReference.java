@@ -7,7 +7,7 @@ public class ArrayReference extends Expr{
       this.id = id;
       this.expr = expr;
   }
-  public void accept(Visitor v){
-      v.visit(this);
+  public Object accept(Visitor v){
+      return v.visit(this);
   }
 }

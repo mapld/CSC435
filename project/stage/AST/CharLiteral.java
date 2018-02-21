@@ -5,7 +5,7 @@ public class CharLiteral extends Literal{
     public CharLiteral(String s, int line, int pos){
         value = s.charAt(1);
     }
-    public void accept(Visitor v){
-        v.visit(this);
+    public Object accept(Visitor v){
+        return v.visit(this);
     }
 }
