@@ -54,6 +54,7 @@ public class TypeCheckVisitor implements Visitor{
       operationIndices.put("*", 2);
       operationIndices.put("<", 3);
       operationIndices.put("==", 4);
+      operationIndices.put("sub", 5);
 
       int operationCount = operationIndices.size();
       int typeCount = typeIndices.size();
@@ -99,11 +100,23 @@ public class TypeCheckVisitor implements Visitor{
       addTypeMapping("==", charType.toShortString(), charType.toShortString(), booleanType);
       addTypeMapping("==", stringType.toShortString(), stringType.toShortString(), booleanType);
       addTypeMapping("==", booleanType.toShortString(), booleanType.toShortString(), booleanType);
+
+      // type equivalence
+      addTypeMapping("sub", intType.toShortString(), intType.toShortString(), intType);
+      addTypeMapping("sub", floatType.toShortString(), floatType.toShortString(), floatType);
+      addTypeMapping("sub", charType.toShortString(), charType.toShortString(), charType);
+      addTypeMapping("sub", stringType.toShortString(), stringType.toShortString(), stringType);
+      addTypeMapping("sub", booleanType.toShortString(), booleanType.toShortString(), booleanType);
+      addTypeMapping("sub", voidType.toShortString(), voidType.toShortString(), voidType);
+
+      // subtypes (right is subtype of left)
+      addTypeMapping("sub", floatType.toShortString(), intType.toShortString(), floatType);
     }
   };
 
   TypeExprTable typeExprTable;
   HashMap<String, FunctionHandle> ftable;
+  Type currentFunctionType;
   HashMap<String, Type> vtable;
   ArrayList<SemanticError> semanticErrors;
 
@@ -168,6 +181,7 @@ public class TypeCheckVisitor implements Visitor{
       semanticErrors.add(new SemanticError("function with name " + fd.id.name + " cannot be defined twice", fd.id.line, fd.id.pos));
     }
     ftable.put(fd.id.name, functionHandle);
+    currentFunctionType = fd.type;
     fd.params.accept(this);
     return fd.type;
   }
@@ -199,7 +213,6 @@ public class TypeCheckVisitor implements Visitor{
 
   public Object visit(ParameterList params){
     for(int i = 0; i < params.size(); i++){
-      System.out.println("test");
       params.getAt(i).accept(this);
     }
     return null;
@@ -217,24 +230,84 @@ public class TypeCheckVisitor implements Visitor{
     }
     Type lType = vtable.get(assignStatement.id.name);
     Type rType = (Type)assignStatement.expr.accept(this);
-    if(rType != null && !lType.equals(rType)){
-      semanticErrors.add(new SemanticError("Type mismatch in assign statement, cannot convert " + rType.toShortString() + " to " + lType.toShortString(), assignStatement.id.line, assignStatement.id.pos));
+    if(rType != null && !lType.equals(rType) && typeExprTable.getTypeMapping("sub", lType.toShortString(), rType.toShortString()) == null){
+      semanticErrors.add(new SemanticError("type mismatch in assign statement, cannot convert " + rType.toShortString() + " to " + lType.toShortString(), assignStatement.id.line, assignStatement.id.pos));
     }
     return null;
   }
   public Object visit(ArrayAssignStatement assignStatement){
-    return null;
-  }
-  public Object visit(ExprStatement exprStatement){
+    // check index is an int
+    Type indexType = (Type)assignStatement.indexExpr.accept(this);
+    if(!indexType.equals(new IntegerType())){
+      semanticErrors.add(new SemanticError("invalid array assignment index type " + indexType.toShortString(), assignStatement.indexExpr.line, assignStatement.indexExpr.pos));
+    }
+
+    // check assignment
+    if(!vtable.containsKey(assignStatement.id.name)){
+      semanticErrors.add(new SemanticError("assignment to undefined variable " + assignStatement.id.name, assignStatement.id.line, assignStatement.id.pos));
+      return null;
+    }
+    Type lType = (ArrayType)vtable.get(assignStatement.id.name);
+    lType = ((ArrayType)lType).baseType;
+    Type rType = (Type)assignStatement.assignExpr.accept(this);
+    if(rType != null && !lType.equals(rType) && typeExprTable.getTypeMapping("sub", lType.toShortString(), rType.toShortString()) == null){
+      semanticErrors.add(new SemanticError("type mismatch in assign statement, cannot convert " + rType.toShortString() + " to " + lType.toShortString(), assignStatement.id.line, assignStatement.id.pos));
+    }
     return null;
   }
 
-  public Object visit(IfStatement ifStatement){return null;}
-  public Object visit(WhileStatement whileStatement){return null;}
-  public Object visit(PrintStatement printStatement){return null;}
-  public Object visit(PrintlnStatement printlnStatement){return null;}
-  public Object visit(ReturnStatement returnStatement){return null;}
-  public Object visit(Block block){return null;}
+  public Object visit(ExprStatement exprStatement){
+    return exprStatement.expr.accept(this);
+  }
+  public Object visit(IfStatement ifStatement){
+    Type conditionType = (Type)ifStatement.condition.accept(this);
+    Type booleanType = new BooleanType();
+    if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
+      semanticErrors.add(new SemanticError("If condition must be boolean", ifStatement.condition.line, ifStatement.condition.pos));
+    }
+    return conditionType;
+  }
+  public Object visit(WhileStatement whileStatement){
+    Type conditionType = (Type)whileStatement.condition.accept(this);
+    Type booleanType = new BooleanType();
+    if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
+      semanticErrors.add(new SemanticError("While condition must be boolean", whileStatement.condition.line, whileStatement.condition.pos));
+    }
+    return conditionType;
+  }
+  public Object visit(PrintStatement printStatement){
+    Type exprType = (Type)printStatement.expr.accept(this);
+    if(!exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
+      semanticErrors.add(new SemanticError("Wrong type for print statement", printStatement.expr.line, printStatement.expr.pos));
+    }
+    return exprType;
+  }
+  public Object visit(PrintlnStatement printStatement){
+    Type exprType = (Type)printStatement.expr.accept(this);
+    if(!exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
+      semanticErrors.add(new SemanticError("Wrong type for println statement", printStatement.expr.line, printStatement.expr.pos));
+    }
+    return exprType;
+  }
+  public Object visit(ReturnStatement returnStatement){
+    if(returnStatement.expr == null){
+      if(!currentFunctionType.equals(new VoidType())){
+        semanticErrors.add(new SemanticError("Return statement needs expr of type " + currentFunctionType.toShortString(), returnStatement.line, returnStatement.pos));
+      }
+      return null;
+    }
+    Type exprType = (Type)returnStatement.expr.accept(this);
+    if(!exprType.equals(currentFunctionType)){
+      semanticErrors.add(new SemanticError("Wrong type in return function", returnStatement.line, returnStatement.pos));
+    }
+    return exprType;
+  }
+  public Object visit(Block block){
+    for(int i = 0; i < block.numStatements(); i++){
+      block.statementAt(i).accept(this);
+    }
+    return null;
+  }
 
   public Object visit(EqualsExpr expr){
     String operator = "==";
@@ -308,8 +381,53 @@ public class TypeCheckVisitor implements Visitor{
   public Object visit(FloatLiteral floatLiteral){return new FloatType();}
   public Object visit(BooleanLiteral booleanLiteral){return new BooleanType();}
 
-  public Object visit(ArrayReference arrayReference){return null;}
-  public Object visit(FunctionCall functionCall){return null;}
+  public Object visit(ArrayReference arrayReference){
+    // check index is an int
+    Type indexType = (Type)arrayReference.expr.accept(this);
+    if(!indexType.equals(new IntegerType())){
+      semanticErrors.add(new SemanticError("invalid array assignment index type " + indexType.toShortString(), arrayReference.expr.line, arrayReference.expr.pos));
+    }
+
+    if(!vtable.containsKey(arrayReference.id.name)){
+      semanticErrors.add(new SemanticError("reference to undefined identifier" + arrayReference.id.name, arrayReference.id.line, arrayReference.id.pos));
+      return null;
+    }
+    Type idType = (ArrayType)vtable.get(arrayReference.id.name);
+    idType = ((ArrayType)idType).baseType;
+    return idType;
+  }
+
+  public Object visit(FunctionCall functionCall){
+    Identifier id = functionCall.id;
+    ExprList exprList = functionCall.exprList;
+
+    if(!ftable.containsKey(id.name)){
+      semanticErrors.add(new SemanticError("reference to undefined function " + id.name, id.line, id.pos));
+      return null;
+    }
+    FunctionHandle fh = ftable.get(id.name);
+    FunctionDecl fd = fh.fd;
+
+    int i = 0;
+    for(; i < fd.params.size(); i++){
+      if(i >= exprList.size()){
+        semanticErrors.add(new SemanticError("wrong number of parameters in call to function " + id.name, id.line, id.pos));
+        continue;
+      }
+      Type p = fd.params.getAt(i).type;
+      Type a = (Type)exprList.getAt(i).accept(this);
+      if(typeExprTable.getTypeMapping("sub", p.toShortString(), a.toShortString()) == null){
+        semanticErrors.add(new SemanticError("cannot convert parameter of type " + a.toShortString() + " to type " + p.toShortString(), id.line, id.pos));
+      }
+    }
+    if(i < exprList.size()){
+      semanticErrors.add(new SemanticError("too many parameters in function call " + id.name, id.line, id.pos));
+    }
+    return fd.type;
+  }
+
+  // not used
   public Object visit(ExprList exprList){return null;}
+
   public Object visit(ParenExpr parenExpr){return parenExpr.innerExpr.accept(this);}
 }

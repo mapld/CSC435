@@ -96,7 +96,7 @@ options {
       WHILE '(' exp=expr ')' bl=block { st = new WhileStatement(exp,bl);} |
       PRINT exp=expr ';' {st = new PrintStatement(exp);}|
       PRINTLN exp=expr ';' {st = new PrintlnStatement(exp);} |
-      RETURN (exp=expr)? ';' {st = new ReturnStatement(exp);}
+      RETURN (exp=expr)? f=';' {st = new ReturnStatement(exp, $f.line, $f.pos);}
       ;
 
 elseBlock returns [Block block]
