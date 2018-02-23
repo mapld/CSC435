@@ -1,4 +1,4 @@
-int func(string name, float cash){
+boolean func(string name, float cash){
   boolean isBob;
   print cash;
   isBob = (name == "bob");
@@ -6,7 +6,6 @@ int func(string name, float cash){
 }
 
 void main(){
-  void test;
   char flag;
   float money;
   string name;

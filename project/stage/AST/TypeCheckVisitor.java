@@ -26,7 +26,9 @@ public class TypeCheckVisitor implements Visitor{
 
     public Type getTypeMapping(String operation, String leftType, String rightType){
       int operationIndex = operationIndices.get(operation);
+      if(!typeIndices.containsKey(leftType)) return null;
       int leftTypeIndex = typeIndices.get(leftType);
+      if(!typeIndices.containsKey(rightType)) return null;
       int rightTypeIndex = typeIndices.get(rightType);
 
       return typeOperationTable.get(operationIndex).get(leftTypeIndex).get(rightTypeIndex);
@@ -257,13 +259,18 @@ public class TypeCheckVisitor implements Visitor{
   }
 
   public Object visit(ExprStatement exprStatement){
-    return exprStatement.expr.accept(this);
+    Type type = (Type)exprStatement.expr.accept(this);
+    return type;
   }
   public Object visit(IfStatement ifStatement){
     Type conditionType = (Type)ifStatement.condition.accept(this);
     Type booleanType = new BooleanType();
     if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
       semanticErrors.add(new SemanticError("If condition must be boolean", ifStatement.condition.line, ifStatement.condition.pos));
+    }
+    ifStatement.ifBlock.accept(this);
+    if(ifStatement.elseBlock != null){
+        ifStatement.elseBlock.accept(this);
     }
     return conditionType;
   }
@@ -273,6 +280,7 @@ public class TypeCheckVisitor implements Visitor{
     if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
       semanticErrors.add(new SemanticError("While condition must be boolean", whileStatement.condition.line, whileStatement.condition.pos));
     }
+    whileStatement.block.accept(this);
     return conditionType;
   }
   public Object visit(PrintStatement printStatement){
@@ -384,7 +392,7 @@ public class TypeCheckVisitor implements Visitor{
   public Object visit(ArrayReference arrayReference){
     // check index is an int
     Type indexType = (Type)arrayReference.expr.accept(this);
-    if(!indexType.equals(new IntegerType())){
+    if(indexType != null && !indexType.equals(new IntegerType())){
       semanticErrors.add(new SemanticError("invalid array assignment index type " + indexType.toShortString(), arrayReference.expr.line, arrayReference.expr.pos));
     }
 
@@ -416,7 +424,10 @@ public class TypeCheckVisitor implements Visitor{
       }
       Type p = fd.params.getAt(i).type;
       Type a = (Type)exprList.getAt(i).accept(this);
-      if(typeExprTable.getTypeMapping("sub", p.toShortString(), a.toShortString()) == null){
+      if(a == null){
+          continue;
+      }
+      if(!p.equals(a) && typeExprTable.getTypeMapping("sub", p.toShortString(), a.toShortString()) == null){
         semanticErrors.add(new SemanticError("cannot convert parameter of type " + a.toShortString() + " to type " + p.toShortString(), id.line, id.pos));
       }
     }

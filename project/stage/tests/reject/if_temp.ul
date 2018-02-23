@@ -1,5 +1,6 @@
 void main(){
+  _doVar;
   if(true){
-    _doThing;
+    _doVar;
   }
 }

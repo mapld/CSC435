@@ -3,7 +3,6 @@ void main(){
   string _name;
   float _____NUMBER;
   char _22;
-  void _;
 
   return;
 }

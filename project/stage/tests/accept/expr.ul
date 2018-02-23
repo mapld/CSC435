@@ -30,10 +30,10 @@ void main(){
 
   // composition
   things[5] = 5;
-  thins[6] = functionWithMultiParams(things[5], 2, 'a');
+  things[6] = functionWithMultiParams(things[5], 2, 'a');
   things[7] = functionWithOneParam(1);
   things[8] = functionWithoutParams();
-  thins[9] = functionWithMultiParams(things[7], things[functionWithOneParam(things[functionWithOneParam(things[5])])], 'a');
+  things[9] = functionWithMultiParams(things[7], things[functionWithOneParam(things[functionWithOneParam(things[5])])], 'a');
 
 
 
