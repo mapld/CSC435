@@ -1,6 +1,8 @@
-* CSC435 Assignment 1
-Commands:
+* CSC435 Compiler
+This implements up to assignment 2 of CSC435. The compiler uses an antlr grammar, an implemented AST, a pretty print visitor, and a type check visitor. This includes the bonus of interpreting int as a subtype of float.  
+  
+** Commands:
 - make to build
-- java Compiler filename.ul to compile a ul file
+- java Compiler filename.ul to compile a ul file (now including Type Checking!)
 - java PrettyPrinter filename.ul to pretty print a ul file using the compiler
 - run_tests.sh runs make and all test cases
