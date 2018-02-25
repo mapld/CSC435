@@ -123,7 +123,9 @@ public class TypeCheckVisitor implements Visitor{
   ArrayList<SemanticError> semanticErrors;
 
   void setVariable(Identifier id, Type type){
-    if(type.toShortString().equals("void")){
+    if(type.toShortString().equals("void") ||
+            (type instanceof ArrayType && ((ArrayType)type).baseType.equals(new VoidType()))
+      ){
       semanticErrors.add(new SemanticError("variable cannot have void type", type.line, type.pos));
     }
     if(vtable.containsKey(id.name)){
@@ -221,6 +223,13 @@ public class TypeCheckVisitor implements Visitor{
   }
 
   public Object visit(VarDecl vd){
+      /*
+    if(vd.type.equals(new VoidType()) || 
+            (vd.type instanceof ArrayType && ((ArrayType)vd.type).baseType.equals(new VoidType()))
+                ){
+      semanticErrors.add(new SemanticError("invalid variable type", vd.id.line, vd.id.pos));
+    }
+    */
     setVariable(vd.id, vd.type);
     return null;
   }
@@ -264,6 +273,7 @@ public class TypeCheckVisitor implements Visitor{
   }
   public Object visit(IfStatement ifStatement){
     Type conditionType = (Type)ifStatement.condition.accept(this);
+    if(conditionType == null) return null;
     Type booleanType = new BooleanType();
     if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
       semanticErrors.add(new SemanticError("If condition must be boolean", ifStatement.condition.line, ifStatement.condition.pos));
@@ -276,6 +286,7 @@ public class TypeCheckVisitor implements Visitor{
   }
   public Object visit(WhileStatement whileStatement){
     Type conditionType = (Type)whileStatement.condition.accept(this);
+    if(conditionType == null) return null;
     Type booleanType = new BooleanType();
     if(typeExprTable.getTypeMapping("sub", conditionType.toShortString(), booleanType.toShortString()) == null){
       semanticErrors.add(new SemanticError("While condition must be boolean", whileStatement.condition.line, whileStatement.condition.pos));
@@ -285,14 +296,14 @@ public class TypeCheckVisitor implements Visitor{
   }
   public Object visit(PrintStatement printStatement){
     Type exprType = (Type)printStatement.expr.accept(this);
-    if(!exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
+    if(exprType != null && !exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
       semanticErrors.add(new SemanticError("Wrong type for print statement", printStatement.expr.line, printStatement.expr.pos));
     }
     return exprType;
   }
   public Object visit(PrintlnStatement printStatement){
     Type exprType = (Type)printStatement.expr.accept(this);
-    if(!exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
+    if(exprType != null && !exprType.equals(new IntegerType()) && !exprType.equals(new FloatType()) && !exprType.equals(new CharType()) && !exprType.equals(new StringType()) && !exprType.equals(new BooleanType())){
       semanticErrors.add(new SemanticError("Wrong type for println statement", printStatement.expr.line, printStatement.expr.pos));
     }
     return exprType;

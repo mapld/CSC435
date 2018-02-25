@@ -11,7 +11,6 @@ boolean doMath(float[1000] base, float factor, int depth){
 void main(){
   // make some arrays (compound types)
   int[5] i;
-  void[2000] v;
   string[3333] s;
   char[50] c;
   boolean[300] b;
