@@ -137,7 +137,18 @@ public class TypeCheckVisitor implements Visitor{
   public Boolean visit(Program p){
     typeExprTable = new TypeExprTable();
     semanticErrors = new ArrayList<SemanticError>();
+
     ftable = new HashMap<String, FunctionHandle>();
+    for(int i = 0; i < p.size(); i++){
+        Function f = p.elementAt(i);
+        FunctionHandle functionHandle = new FunctionHandle();
+        FunctionDecl fd = f.functionDecl;
+        functionHandle.fd = fd;
+        if(ftable.containsKey(fd.id.name)){
+          semanticErrors.add(new SemanticError("function with name " + fd.id.name + " cannot be defined twice", fd.id.line, fd.id.pos));
+        }
+        ftable.put(fd.id.name, functionHandle);
+    }
     for(int i = 0; i < p.size(); i++){
       Function f = p.elementAt(i);
       f.accept(this);
@@ -179,12 +190,6 @@ public class TypeCheckVisitor implements Visitor{
   }
 
   public Type visit(FunctionDecl fd){
-    FunctionHandle functionHandle = new FunctionHandle();
-    functionHandle.fd = fd;
-    if(ftable.containsKey(fd.id.name)){
-      semanticErrors.add(new SemanticError("function with name " + fd.id.name + " cannot be defined twice", fd.id.line, fd.id.pos));
-    }
-    ftable.put(fd.id.name, functionHandle);
     currentFunctionType = fd.type;
     fd.params.accept(this);
     return fd.type;
@@ -316,7 +321,7 @@ public class TypeCheckVisitor implements Visitor{
       return null;
     }
     Type exprType = (Type)returnStatement.expr.accept(this);
-    if(!exprType.equals(currentFunctionType)){
+    if(!exprType.equals(currentFunctionType) && typeExprTable.getTypeMapping("sub", currentFunctionType.toShortString(), exprType.toShortString()) == null){
       semanticErrors.add(new SemanticError("Wrong type in return function", returnStatement.line, returnStatement.pos));
     }
     return exprType;
