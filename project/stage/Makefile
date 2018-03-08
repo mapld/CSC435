@@ -11,4 +11,4 @@ compiler:
 	javac *.java
 
 clean:
-	rm *.class AST/*.class Type/*.class $(GNAME)*.java $(GNAME)__.g $(GNAME).tokens
+	rm *.class AST/*.class Type/*.class IR/*.class $(GNAME)*.java $(GNAME)__.g $(GNAME).tokens
