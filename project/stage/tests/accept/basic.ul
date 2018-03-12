@@ -1,0 +1,15 @@
+void main(){
+  int i;
+  float f;
+  string s;
+  boolean b;
+  char c;
+  int[5] arr;
+  i = 1;
+  f = 2.0;
+  s = "Hello";
+  c = 'c';
+  b = false;
+  b = true;
+  arr[4] = 333;
+}

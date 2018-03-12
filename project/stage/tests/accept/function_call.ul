@@ -1,4 +1,10 @@
+float[5] bah(int a, float b, char c, string e, boolean f){
+}
+
 int foo(){
+  int bar;
+  float foo;
+  string[5] foobar;
   println "foo";
 }
 

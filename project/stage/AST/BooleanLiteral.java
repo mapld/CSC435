@@ -10,4 +10,10 @@ public class BooleanLiteral extends Literal{
     public Object accept(Visitor v){
         return v.visit(this);
     }
+    public String toString(){
+      if(value){
+        return "TRUE";
+      }
+      return "FALSE";
+    }
 }

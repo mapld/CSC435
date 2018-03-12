@@ -8,7 +8,7 @@ public abstract class Type {
     this.line = line;
     this.pos = pos;
   }
-  public abstract void accept (Visitor v);
+  public abstract Object accept (Visitor v);
   public abstract String toShortString();
   public abstract boolean equals (Object o);
 }

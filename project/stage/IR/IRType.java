@@ -7,4 +7,12 @@ public class IRType{
     this.isArray = isArray;
     this.baseType = baseType;
   }
+  public String toString(){
+    String repr = "";
+    if(isArray){
+      repr += "A";
+    }
+    repr += baseType.toString();
+    return repr;
+  }
 }

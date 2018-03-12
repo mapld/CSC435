@@ -10,7 +10,7 @@ public enum IRBaseTypes{
   FLOAT("F"),
   DOUBLE("D"),
   VOID("V"),
-  STRING("A");
+  STRING("U");
 
   private final String irName;
 

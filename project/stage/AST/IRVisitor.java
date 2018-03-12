@@ -2,11 +2,13 @@ package AST;
 import Semantic.*;
 import Type.*;
 import IR.*;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 public class IRVisitor implements Visitor{
+  Map<String, Integer> temporariesTable;
   IR ir;
   public Object visit(Program p){
     ir = new IR();
@@ -17,25 +19,76 @@ public class IRVisitor implements Visitor{
     return ir;
   }
   public Object visit(Function f){
+    // reset the temporaries table to empty
+    temporariesTable = new HashMap<String, Integer>();
+
     f.functionDecl.accept(this);
     f.functionBody.accept(this);
     return null;
   }
   public Object visit(FunctionDecl fd){
-    IRType irType = IRTools.typeToIRType(fd.type);
-    System.out.println(irType);
+    IRType irType = (IRType)fd.type.accept(this);
+    // System.out.println(irType);
+    ir.startFunction(fd.id.name, irType);
+
+    fd.params.accept(this);
     // parse header
     return null;
   }
-  public Object visit(FunctionBody fb){return null;}
-  public Object visit(Type ct){return null;}
-  public Object visit(Identifier id){return null;}
-  public Object visit(Parameter param){return null;}
-  public Object visit(ParameterList params){return null;}
-  public Object visit(VarDecl vd){return null;}
-  public Object visit(AssignStatement assignStatement){return null;}
-  public Object visit(ArrayAssignStatement assignStatement){return null;}
-  public Object visit(ExprStatement exprStatement){return null;}
+  public Object visit(FunctionBody fb){
+    for(int i = 0; i < fb.numVars(); i++){
+      fb.varAt(i).accept(this);
+    }
+    for(int i = 0; i < fb.numStatements(); i++){
+      fb.statementAt(i).accept(this);
+    }
+    return null;
+  }
+  public Object visit(Type ct){
+    return IRTools.typeToIRType(ct);
+  }
+  public Object visit(Identifier id){
+    return null;
+  }
+
+  public Object visit(ParameterList params){
+    for(int i = 0; i < params.size(); i++){
+      params.getAt(i).accept(this);
+    }
+    return null;
+  }
+  public Object visit(Parameter param){
+    int tempNum = ir.addFunctionParam((IRType)param.type.accept(this));
+    temporariesTable.put(param.id.name, tempNum);
+    // System.out.println("name: " + param.id.name + ", temp num: " + temporariesTable.get(param.id.name));
+    return null;
+  }
+
+  public Object visit(VarDecl vd){
+    int tempNum = ir.getTemporary((IRType)vd.type.accept(this));
+    temporariesTable.put(vd.id.name, tempNum);
+    return null;
+  }
+  public Object visit(AssignStatement assignStatement){
+    // whatever is on the right of the assign statement will be visited and put its result in a temporary which will be returned
+    int leftTemp = temporariesTable.get(assignStatement.id.name);
+    int rightTemp = (Integer)assignStatement.expr.accept(this);
+    IRAssignInstruction assignment = AssignmentFactory.createOperandAssignment(leftTemp, rightTemp);
+    ir.addInstruction(assignment);
+    return null;
+  }
+  public Object visit(ArrayAssignStatement assignStatement){
+    int leftTemp = temporariesTable.get(assignStatement.id.name);
+    int rightTemp = (Integer)assignStatement.assignExpr.accept(this);
+    int indexTemp = (Integer)assignStatement.indexExpr.accept(this);
+    IRAssignInstruction assignment = AssignmentFactory.createArrayAssignment(leftTemp, indexTemp, rightTemp);
+    ir.addInstruction(assignment);
+    return null;
+  }
+  public Object visit(ExprStatement exprStatement){
+    exprStatement.expr.accept(this);
+    return null;
+  }
   public Object visit(IfStatement ifStatement){return null;}
   public Object visit(WhileStatement whileStatement){return null;}
   public Object visit(PrintStatement printStatement){return null;}
@@ -47,11 +100,37 @@ public class IRVisitor implements Visitor{
   public Object visit(AddExpr lessThanExpr){return null;}
   public Object visit(SubtractExpr lessThanExpr){return null;}
   public Object visit(MultExpr multExpr){return null;}
-  public Object visit(StringLiteral stringLiteral){return null;}
-  public Object visit(CharLiteral stringLiteral){return null;}
-  public Object visit(IntegerLiteral stringLiteral){return null;}
-  public Object visit(FloatLiteral floatLiteral){return null;}
-  public Object visit(BooleanLiteral booleanLiteral){return null;}
+  public Object visit(StringLiteral stringLiteral){
+    int temporary = ir.getTemporary(new IRType(IRBaseTypes.STRING, false));
+    IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, stringLiteral);
+    ir.addInstruction(constantAssignment);
+    return temporary;
+  }
+  public Object visit(CharLiteral charLiteral){
+    int temporary = ir.getTemporary(new IRType(IRBaseTypes.CHAR, false));
+    IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, charLiteral);
+    ir.addInstruction(constantAssignment);
+    return temporary;
+  }
+
+  public Object visit(IntegerLiteral intLiteral){
+    int temporary = ir.getTemporary(new IRType(IRBaseTypes.INT, false));
+    IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, intLiteral);
+    ir.addInstruction(constantAssignment);
+    return temporary;
+  }
+  public Object visit(FloatLiteral floatLiteral){
+    int temporary = ir.getTemporary(new IRType(IRBaseTypes.FLOAT, false));
+    IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, floatLiteral);
+    ir.addInstruction(constantAssignment);
+    return temporary;
+  }
+  public Object visit(BooleanLiteral booleanLiteral){
+    int temporary = ir.getTemporary(new IRType(IRBaseTypes.BOOLEAN, false));
+    IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, booleanLiteral);
+    ir.addInstruction(constantAssignment);
+    return temporary;
+  }
   public Object visit(ArrayReference arrayReference){return null;}
   public Object visit(FunctionCall functionCall){return null;}
   public Object visit(ExprList exprList){return null;}

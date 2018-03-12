@@ -8,6 +8,7 @@
 import org.antlr.runtime.*;
 import java.io.*;
 import AST.*;
+import IR.*;
 
 public class Compiler {
 	public static void main (String[] args) throws Exception {
@@ -31,6 +32,9 @@ public class Compiler {
 			Program program = parser.program();
       TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor();
       program.accept(typeCheckVisitor);
+      IRVisitor irVisitor = new IRVisitor();
+      IR ir = (IR)program.accept(irVisitor);
+      ir.printIR();
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.
