@@ -1,7 +1,7 @@
 package IR;
 
 public enum IRBaseTypes{
-  BOOLEAN("B"),
+  BOOLEAN("Z"),
   CHAR("C"),
   BYTE("B"),
   SHORT("S"),

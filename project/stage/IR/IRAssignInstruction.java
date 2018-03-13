@@ -92,10 +92,9 @@ public class IRAssignInstruction extends IRInstruction{
     case NEWARRAY:
       repr += "T";
       repr += leftTemp;
-      repr += " := NEWARRAY";
-      repr += "(";
+      repr += " := NEWARRAY ";
       repr += opType.toString();
-      repr += ")";
+      repr += " ";
       repr += size;
       break;
     }
