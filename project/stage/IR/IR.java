@@ -5,12 +5,16 @@ import java.util.ArrayList;
 public class IR{
   List<IRFunction> functions;
   IRFunction currentFunction;
+  String name;
 
-  public IR(){
+  public IR(String name){
+    this.name = name;
     functions = new ArrayList<IRFunction>();
   }
 
   public void printIR(){
+    System.out.println("PROG " + name);
+
     for(int i = 0; i < functions.size(); i++){
       IRFunction function = functions.get(i);
       // print function decl

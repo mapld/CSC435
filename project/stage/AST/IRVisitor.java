@@ -11,7 +11,7 @@ public class IRVisitor implements Visitor{
   Map<String, Integer> temporariesTable;
   IR ir;
   public Object visit(Program p){
-    ir = new IR();
+    ir = new IR("test");
     for(int i = 0; i < p.size(); i++){
       Function f = p.elementAt(i);
       f.accept(this);
