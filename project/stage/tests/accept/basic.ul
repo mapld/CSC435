@@ -27,4 +27,19 @@ void main(){
   println j;
   j = j * i - i;
   println j;
+  if(b){
+    i = 500;
+  }
+  else{
+    i = 600;
+    if(true){
+      j = 5;
+    }
+    else{
+      j = 7;
+    }
+    println "testing if statements";
+  }
+  println i;
+  println j;
 }

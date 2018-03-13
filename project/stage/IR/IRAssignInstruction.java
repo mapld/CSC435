@@ -19,6 +19,13 @@ public class IRAssignInstruction extends IRInstruction{
     INVERSION("!"),
     CONVERT("2");
 
+    private static final Map<String, UnaryOps>  lookup = new HashMap<String, UnaryOps>();
+    static{
+      for (UnaryOps uo : UnaryOps.values()){
+        lookup.put(uo.toString(), uo);
+      }
+    }
+
     private final String opName;
 
     private UnaryOps(String s){
@@ -27,6 +34,10 @@ public class IRAssignInstruction extends IRInstruction{
 
     public String toString(){
       return this.opName;
+    }
+
+    public static UnaryOps get(String val){
+      return lookup.get(val);
     }
   }
 
@@ -128,6 +139,13 @@ public class IRAssignInstruction extends IRInstruction{
       if(unaryOp == UnaryOps.CONVERT){
         repr += "T" + leftTemp;
         repr += " := " + opType.toString() + "2" + toType.toString() + " ";
+        repr += "T" + rightTemp;
+      }
+      else{
+        repr += "T";
+        repr += leftTemp;
+        repr += " := ";
+        repr += opType.toString() + unaryOp.toString() + " ";
         repr += "T" + rightTemp;
       }
       break;

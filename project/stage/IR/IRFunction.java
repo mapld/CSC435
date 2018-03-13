@@ -10,6 +10,8 @@ public class IRFunction{
   public IRType returnType;
   public List<Integer> params; // indicies for temporaries
 
+  int labelCount = 0;
+
   public IRFunction(String name, IRType returnType){
     this.name = name;
     this.returnType = returnType;
@@ -33,6 +35,10 @@ public class IRFunction{
   public int getNewTemp(IRType type){
     temporaries.add(type);
     return temporaries.size()-1;
+  }
+
+  public int getNewLabel(){
+    return ++labelCount;
   }
 
   public String toString(){

@@ -64,6 +64,10 @@ public class IR{
     return getTemporary(new IRType(baseType, true));
   }
 
+  public int getLabel(){
+    return currentFunction.getNewLabel();
+  }
+
   public IRType getTemporaryType(int tempNum){
     return currentFunction.getTemporaryType(tempNum);
   }

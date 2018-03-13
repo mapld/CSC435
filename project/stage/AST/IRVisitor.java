@@ -98,7 +98,45 @@ public class IRVisitor implements Visitor{
     exprStatement.expr.accept(this);
     return null;
   }
-  public Object visit(IfStatement ifStatement){return null;}
+  public Object visit(IfStatement ifStatement){
+    int conditionTemp = (Integer)ifStatement.condition.accept(this);
+    IRType type = new IRType(IRBaseTypes.BOOLEAN, false);
+    int invertedTemp = ir.getTemporary(type);
+    IRAssignInstruction invertInst = AssignmentFactory.createUnaryOp("!", type, invertedTemp, conditionTemp);
+    ir.addInstruction(invertInst);
+
+    // invertedTemp now holds the reverse of the if statement (if true jump forward)
+    int elseLabel = -1;
+    if(ifStatement.elseBlock != null){
+      elseLabel = ir.getLabel();
+    }
+    int afterLabel = ir.getLabel();
+
+    IRJumpInstruction jumpInst;
+    if(elseLabel >= 0){
+      jumpInst = new IRJumpInstruction(elseLabel, invertedTemp);
+    }
+    else{
+      jumpInst = new IRJumpInstruction(afterLabel, invertedTemp);
+    }
+    ir.addInstruction(jumpInst);
+
+    ifStatement.ifBlock.accept(this);
+
+
+    if(ifStatement.elseBlock != null){
+      IRJumpInstruction afterElseJumpInst = new IRJumpInstruction(afterLabel);
+      ir.addInstruction(afterElseJumpInst);
+      IRLabelInstruction elseLabelInst = new IRLabelInstruction(elseLabel);
+      ir.addInstruction(elseLabelInst);
+      ifStatement.elseBlock.accept(this);
+    }
+
+    IRLabelInstruction labelInst = new IRLabelInstruction(afterLabel);
+    ir.addInstruction(labelInst);
+
+    return null;
+  }
   public Object visit(WhileStatement whileStatement){return null;}
   public Object visit(PrintStatement printStatement){
     int temporaryResult = (Integer)printStatement.expr.accept(this);
@@ -115,20 +153,13 @@ public class IRVisitor implements Visitor{
     return null;
   }
   public Object visit(ReturnStatement returnStatement){return null;}
-  public Object visit(Block block){return null;}
-
-  /*
-  class ConversionDetails{
-    public int newLeftTemp;
-    public int newRightTemp;
-    public IRType finalType;
-    public ConversionDetails(int leftTemp, int rightTemp, IRType type){
-      newLeftTemp = leftTemp;
-      newRightTemp = rightTemp;
-      finalType = type;
+  public Object visit(Block block){
+    for(int i = 0; i < block.numStatements(); i++){
+      block.statementAt(i).accept(this);
     }
+    return null;
   }
-  */
+
   class MutInt{
     public int value;
     public MutInt(int value){

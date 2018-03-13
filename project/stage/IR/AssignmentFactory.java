@@ -56,6 +56,16 @@ public class AssignmentFactory{
     return inst;
   }
 
+  public static IRAssignInstruction createUnaryOp(String operator, IRType operatorType, int assignTemp, int rightTemp){
+    IRAssignInstruction inst = new IRAssignInstruction();
+    inst.type = IRAssignInstruction.AssignTypes.UNARY_OP;
+    inst.leftTemp = assignTemp;
+    inst.rightTemp = rightTemp;
+    inst.opType = operatorType;
+    inst.unaryOp = IRAssignInstruction.UnaryOps.get(operator);
+    return inst;
+  }
+
   public static IRAssignInstruction createConversion(IRType fromType, IRType toType, int fromTemp, int toTemp){
     IRAssignInstruction inst = new IRAssignInstruction();
     inst.type = IRAssignInstruction.AssignTypes.UNARY_OP;
