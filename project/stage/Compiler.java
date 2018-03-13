@@ -32,6 +32,9 @@ public class Compiler {
 			Program program = parser.program();
       TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor();
       program.accept(typeCheckVisitor);
+      if(typeCheckVisitor.semanticErrors.size() > 0){
+        return;
+      }
       IRVisitor irVisitor = new IRVisitor();
       IR ir = (IR)program.accept(irVisitor);
       ir.printIR();

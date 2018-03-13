@@ -88,10 +88,14 @@ public class TypeCheckVisitor implements Visitor{
       // *
       addTypeMapping("*", intType.toShortString(), intType.toShortString(), intType);
       addTypeMapping("*", floatType.toShortString(), floatType.toShortString(), floatType);
+      addTypeMapping("*", intType.toShortString(), floatType.toShortString(), floatType);
+      addTypeMapping("*", floatType.toShortString(), intType.toShortString(), floatType);
 
       // <
       addTypeMapping("<", intType.toShortString(), intType.toShortString(), booleanType);
       addTypeMapping("<", floatType.toShortString(), floatType.toShortString(), booleanType);
+      addTypeMapping("<", intType.toShortString(), floatType.toShortString(), booleanType);
+      addTypeMapping("<", floatType.toShortString(), intType.toShortString(), booleanType);
       addTypeMapping("<", charType.toShortString(), charType.toShortString(), booleanType);
       addTypeMapping("<", stringType.toShortString(), stringType.toShortString(), booleanType);
       addTypeMapping("<", booleanType.toShortString(), booleanType.toShortString(), booleanType);
@@ -99,6 +103,7 @@ public class TypeCheckVisitor implements Visitor{
       // ==
       addTypeMapping("==", intType.toShortString(), intType.toShortString(), booleanType);
       addTypeMapping("==", floatType.toShortString(), floatType.toShortString(), booleanType);
+      addTypeMapping("==", intType.toShortString(), floatType.toShortString(), booleanType);
       addTypeMapping("==", charType.toShortString(), charType.toShortString(), booleanType);
       addTypeMapping("==", stringType.toShortString(), stringType.toShortString(), booleanType);
       addTypeMapping("==", booleanType.toShortString(), booleanType.toShortString(), booleanType);
@@ -120,7 +125,7 @@ public class TypeCheckVisitor implements Visitor{
   HashMap<String, FunctionHandle> ftable;
   Type currentFunctionType;
   HashMap<String, Type> vtable;
-  ArrayList<SemanticError> semanticErrors;
+  public ArrayList<SemanticError> semanticErrors;
 
   void setVariable(Identifier id, Type type){
     if(type.toShortString().equals("void") ||
@@ -341,6 +346,9 @@ public class TypeCheckVisitor implements Visitor{
       return null;
     }
     Type resultType = typeExprTable.getTypeMapping(operator, lType.toShortString(), rType.toShortString());
+    if(resultType == null){
+      resultType = typeExprTable.getTypeMapping(operator, rType.toShortString(), lType.toShortString());
+    }
     if(resultType == null){
       semanticErrors.add(new SemanticError("Cannot use operator " + operator + " on types " + lType.toShortString() + ", " + rType.toShortString(),expr.line,expr.pos));
     }
