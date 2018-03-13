@@ -38,7 +38,7 @@ public class IRFunction{
   }
 
   public int getNewLabel(){
-    return ++labelCount;
+    return labelCount++;
   }
 
   public String toString(){
