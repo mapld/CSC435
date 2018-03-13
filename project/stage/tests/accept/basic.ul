@@ -1,5 +1,6 @@
 void main(){
   int i;
+  int j;
   float f;
   string s;
   boolean b;
@@ -12,5 +13,9 @@ void main(){
   b = false;
   b = true;
   arr[4] = 333;
-  print 1;
+  println 1;
+  j = i;
+  print j;
+  print i;
+  println "hello";
 }

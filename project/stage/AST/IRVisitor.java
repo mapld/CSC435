@@ -48,7 +48,7 @@ public class IRVisitor implements Visitor{
     return IRTools.typeToIRType(ct);
   }
   public Object visit(Identifier id){
-    return null;
+    return temporariesTable.get(id.name);
   }
 
   public Object visit(ParameterList params){
