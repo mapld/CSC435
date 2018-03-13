@@ -129,29 +129,40 @@ public class IRVisitor implements Visitor{
     }
   }
   */
+  class MutInt{
+    public int value;
+    public MutInt(int value){
+      this.value = value;
+    }
+  }
 
-  IRType convertTypes(Integer leftTemp, Integer rightTemp){
-    IRType leftType = ir.getTemporaryType(leftTemp);
-    IRType rightType = ir.getTemporaryType(rightTemp);
+  IRType convertTypes(MutInt leftTemp, MutInt rightTemp){
+    IRType leftType = ir.getTemporaryType(leftTemp.value);
+    IRType rightType = ir.getTemporaryType(rightTemp.value);
     if(leftType.baseType == IRBaseTypes.FLOAT && rightType.baseType == IRBaseTypes.INT){
       int assignTemp = ir.getTemporary(IRBaseTypes.FLOAT);
-      IRAssignInstruction convertInst = AssignmentFactory.createConversion(rightType, leftType, rightTemp, assignTemp);
+      IRAssignInstruction convertInst = AssignmentFactory.createConversion(rightType, leftType, rightTemp.value, assignTemp);
       ir.addInstruction(convertInst);
-      rightTemp = assignTemp;
+      rightTemp.value = assignTemp;
       return leftType;
     }
     else if(rightType.baseType == IRBaseTypes.FLOAT && leftType.baseType == IRBaseTypes.INT){
+      int assignTemp = ir.getTemporary(IRBaseTypes.FLOAT);
+      IRAssignInstruction convertInst = AssignmentFactory.createConversion(leftType, rightType, leftTemp.value, assignTemp);
+      ir.addInstruction(convertInst);
+      leftTemp.value = assignTemp;
+      return rightType;
     }
     return leftType;
   }
 
   public Object visit(EqualsExpr equalsExpr){
-    Integer leftTemporary = (Integer)equalsExpr.left.accept(this);
-    Integer rightTemporary = (Integer)equalsExpr.right.accept(this);
+    MutInt leftTemporary = new MutInt((Integer)equalsExpr.left.accept(this));
+    MutInt rightTemporary = new MutInt((Integer)equalsExpr.right.accept(this));
     IRType type = convertTypes(leftTemporary, rightTemporary);
     // TODO convert types
     int assignTemporary = ir.getTemporary(IRBaseTypes.BOOLEAN);
-    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("==", type, assignTemporary, leftTemporary, rightTemporary);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("==", type, assignTemporary, leftTemporary.value, rightTemporary.value);
     ir.addInstruction(equalsInst);
     return assignTemporary;
   }

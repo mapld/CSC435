@@ -21,4 +21,6 @@ void main(){
   b = arr[4] == i;
   b = f == i;
   println b;
+  b = i == f;
+  println b;
 }
