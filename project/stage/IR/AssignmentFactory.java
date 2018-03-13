@@ -35,4 +35,14 @@ public class AssignmentFactory{
     inst.indexTemp = indexTemp;
     return inst;
   }
+
+  public static IRAssignInstruction createNewArrayAssignment(int leftTemp, IRType type, int size){
+    IRAssignInstruction inst = new IRAssignInstruction();
+    inst.type = IRAssignInstruction.AssignTypes.NEWARRAY;
+    inst.leftTemp = leftTemp;
+    inst.opType = type;
+    inst.size = size;
+    return inst;
+  }
+
 }

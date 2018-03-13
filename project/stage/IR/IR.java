@@ -52,6 +52,18 @@ public class IR{
     return currentFunction.getNewTemp(type);
   }
 
+  public int getTemporary(IRBaseTypes baseType){
+    return getTemporary(new IRType(baseType, false));
+  }
+
+  public int getArrayTemporary(IRBaseTypes baseType){
+    return getTemporary(new IRType(baseType, true));
+  }
+
+  public IRType getTemporaryType(int tempNum){
+    return currentFunction.getTemporaryType(tempNum);
+  }
+
   // add instruction to latest declared function
   public void addInstruction(IRInstruction instruction){
     currentFunction.addInstruction(instruction);

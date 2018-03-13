@@ -56,6 +56,7 @@ public class IRAssignInstruction extends IRInstruction{
   public int leftTemp;
   public int rightTemp;
   public int indexTemp;
+  public int size;
   public BinaryOps binaryOp;
   public UnaryOps unaryOp;
   public IRType opType;
@@ -87,6 +88,15 @@ public class IRAssignInstruction extends IRInstruction{
       repr += " := ";
       repr += "T";
       repr += rightTemp;
+      break;
+    case NEWARRAY:
+      repr += "T";
+      repr += leftTemp;
+      repr += " := NEWARRAY";
+      repr += "(";
+      repr += opType.toString();
+      repr += ")";
+      repr += size;
       break;
     }
     return repr;

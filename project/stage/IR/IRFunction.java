@@ -22,6 +22,10 @@ public class IRFunction{
     params.add(temporaryIndex);
   }
 
+  public IRType getTemporaryType(int tempNum){
+    return temporaries.get(tempNum);
+  }
+
   public void addInstruction(IRInstruction instruction){
     instructions.add(instruction);
   }
