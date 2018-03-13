@@ -137,7 +137,31 @@ public class IRVisitor implements Visitor{
 
     return null;
   }
-  public Object visit(WhileStatement whileStatement){return null;}
+
+  public Object visit(WhileStatement whileStatement){
+    // first label goes before condition checking
+    int firstLabel = ir.getLabel();
+    int endLabel = ir.getLabel();
+    IRLabelInstruction firstLabelInst = new IRLabelInstruction(firstLabel);
+    ir.addInstruction(firstLabelInst);
+
+    int conditionTemp = (Integer)whileStatement.condition.accept(this);
+    IRType type = new IRType(IRBaseTypes.BOOLEAN, false);
+    int invertedTemp = ir.getTemporary(type);
+    IRAssignInstruction invertInst = AssignmentFactory.createUnaryOp("!", type, invertedTemp, conditionTemp);
+    ir.addInstruction(invertInst);
+
+    IRJumpInstruction toEndJumpInst = new IRJumpInstruction(endLabel, invertedTemp);
+    ir.addInstruction(toEndJumpInst);
+    whileStatement.block.accept(this);
+    IRJumpInstruction toStartJumpInst = new IRJumpInstruction(firstLabel);
+    ir.addInstruction(toStartJumpInst);
+
+    IRLabelInstruction endLabelInst = new IRLabelInstruction(endLabel);
+    ir.addInstruction(endLabelInst);
+    return null;
+  }
+
   public Object visit(PrintStatement printStatement){
     int temporaryResult = (Integer)printStatement.expr.accept(this);
     IRBaseTypes baseType = ir.getTemporaryType(temporaryResult).baseType;

@@ -42,4 +42,12 @@ void main(){
   }
   println i;
   println j;
+
+  i = 0;
+  while(i < 5){
+    print "counting ";
+    print i;
+    i = i + 1;
+  }
+  print "done";
 }
