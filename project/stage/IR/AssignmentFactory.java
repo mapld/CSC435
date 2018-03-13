@@ -55,4 +55,15 @@ public class AssignmentFactory{
     inst.binaryOp = IRAssignInstruction.BinaryOps.get(operator);
     return inst;
   }
+
+  public static IRAssignInstruction createConversion(IRType fromType, IRType toType, int fromTemp, int toTemp){
+    IRAssignInstruction inst = new IRAssignInstruction();
+    inst.type = IRAssignInstruction.AssignTypes.UNARY_OP;
+    inst.unaryOp = IRAssignInstruction.UnaryOps.CONVERT;
+    inst.rightTemp = fromTemp;
+    inst.leftTemp = toTemp;
+    inst.opType = fromType;
+    inst.toType = toType;
+    return inst;
+  }
 }

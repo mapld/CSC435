@@ -124,6 +124,13 @@ public class IRAssignInstruction extends IRInstruction{
       repr += leftTemp + " " + opType.toString() + binaryOp.toString() + " ";
       repr += "T" + rightTemp;
       break;
+    case UNARY_OP:
+      if(unaryOp == UnaryOps.CONVERT){
+        repr += "T" + leftTemp;
+        repr += " := " + opType.toString() + "2" + toType.toString() + " ";
+        repr += "T" + rightTemp;
+      }
+      break;
     }
     return repr;
   }

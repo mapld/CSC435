@@ -117,13 +117,28 @@ public class IRVisitor implements Visitor{
   public Object visit(ReturnStatement returnStatement){return null;}
   public Object visit(Block block){return null;}
 
-  IRType convertTypes(int leftTemp, int rightTemp){
+  /*
+  class ConversionDetails{
+    public int newLeftTemp;
+    public int newRightTemp;
+    public IRType finalType;
+    public ConversionDetails(int leftTemp, int rightTemp, IRType type){
+      newLeftTemp = leftTemp;
+      newRightTemp = rightTemp;
+      finalType = type;
+    }
+  }
+  */
+
+  IRType convertTypes(Integer leftTemp, Integer rightTemp){
     IRType leftType = ir.getTemporaryType(leftTemp);
     IRType rightType = ir.getTemporaryType(rightTemp);
-    if(leftType.baseType == rightType.baseType){
+    if(leftType.baseType == IRBaseTypes.FLOAT && rightType.baseType == IRBaseTypes.INT){
+      int assignTemp = ir.getTemporary(IRBaseTypes.FLOAT);
+      IRAssignInstruction convertInst = AssignmentFactory.createConversion(rightType, leftType, rightTemp, assignTemp);
+      ir.addInstruction(convertInst);
+      rightTemp = assignTemp;
       return leftType;
-    }
-    else if(leftType.baseType == IRBaseTypes.FLOAT && rightType.baseType == IRBaseTypes.INT){
     }
     else if(rightType.baseType == IRBaseTypes.FLOAT && leftType.baseType == IRBaseTypes.INT){
     }
@@ -131,8 +146,8 @@ public class IRVisitor implements Visitor{
   }
 
   public Object visit(EqualsExpr equalsExpr){
-    int leftTemporary = (Integer)equalsExpr.left.accept(this);
-    int rightTemporary = (Integer)equalsExpr.right.accept(this);
+    Integer leftTemporary = (Integer)equalsExpr.left.accept(this);
+    Integer rightTemporary = (Integer)equalsExpr.right.accept(this);
     IRType type = convertTypes(leftTemporary, rightTemporary);
     // TODO convert types
     int assignTemporary = ir.getTemporary(IRBaseTypes.BOOLEAN);
