@@ -155,7 +155,7 @@ public class IRVisitor implements Visitor{
   public Object visit(ArrayReference arrayReference){
     int indexTemporary = (Integer)arrayReference.expr.accept(this);
     int rightTemporary = temporariesTable.get(arrayReference.id.name);
-    IRType type = ir.getTemporaryType(rightTemporary);
+    IRType type = new IRType(ir.getTemporaryType(rightTemporary).baseType, false);
     int leftTemporary = ir.getTemporary(type);
     IRAssignInstruction assignment = AssignmentFactory.createAssignmentFromArray(leftTemporary, rightTemporary, indexTemporary);
     ir.addInstruction(assignment);
