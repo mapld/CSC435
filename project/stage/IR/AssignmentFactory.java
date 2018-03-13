@@ -45,4 +45,14 @@ public class AssignmentFactory{
     return inst;
   }
 
+  public static IRAssignInstruction createBinaryOp(String operator, IRType operatorType, int assignTemp, int leftTemp, int rightTemp){
+    IRAssignInstruction inst = new IRAssignInstruction();
+    inst.type = IRAssignInstruction.AssignTypes.BINARY_OP;
+    inst.leftTemp = leftTemp;
+    inst.rightTemp = rightTemp;
+    inst.indexTemp = assignTemp;
+    inst.opType = operatorType;
+    inst.binaryOp = IRAssignInstruction.BinaryOps.get(operator);
+    return inst;
+  }
 }

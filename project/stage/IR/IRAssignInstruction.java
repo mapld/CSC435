@@ -1,5 +1,7 @@
 package IR;
 import AST.*;
+import java.util.Map;
+import java.util.HashMap;
 
 public class IRAssignInstruction extends IRInstruction{
   public enum AssignTypes{
@@ -42,6 +44,13 @@ public class IRAssignInstruction extends IRInstruction{
     BIGGER(">");
 
     private final String opName;
+    private static final Map<String, BinaryOps>  lookup = new HashMap<String, BinaryOps>();
+
+    static{
+      for (BinaryOps bo : BinaryOps.values()){
+        lookup.put(bo.toString(), bo);
+      }
+    }
 
     private BinaryOps(String s){
       opName = s;
@@ -49,6 +58,10 @@ public class IRAssignInstruction extends IRInstruction{
 
     public String toString(){
       return this.opName;
+    }
+
+    public static BinaryOps get(String val){
+      return lookup.get(val);
     }
   }
 
@@ -103,6 +116,13 @@ public class IRAssignInstruction extends IRInstruction{
       repr += opType.toString();
       repr += " ";
       repr += size;
+      break;
+    case BINARY_OP:
+      repr += "T";
+      repr += indexTemp;
+      repr += " := T";
+      repr += leftTemp + " " + opType.toString() + binaryOp.toString() + " ";
+      repr += "T" + rightTemp;
       break;
     }
     return repr;

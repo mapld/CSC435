@@ -116,7 +116,30 @@ public class IRVisitor implements Visitor{
   }
   public Object visit(ReturnStatement returnStatement){return null;}
   public Object visit(Block block){return null;}
-  public Object visit(EqualsExpr equalsExpr){return null;}
+
+  IRType convertTypes(int leftTemp, int rightTemp){
+    IRType leftType = ir.getTemporaryType(leftTemp);
+    IRType rightType = ir.getTemporaryType(rightTemp);
+    if(leftType.baseType == rightType.baseType){
+      return leftType;
+    }
+    else if(leftType.baseType == IRBaseTypes.FLOAT && rightType.baseType == IRBaseTypes.INT){
+    }
+    else if(rightType.baseType == IRBaseTypes.FLOAT && leftType.baseType == IRBaseTypes.INT){
+    }
+    return leftType;
+  }
+
+  public Object visit(EqualsExpr equalsExpr){
+    int leftTemporary = (Integer)equalsExpr.left.accept(this);
+    int rightTemporary = (Integer)equalsExpr.right.accept(this);
+    IRType type = convertTypes(leftTemporary, rightTemporary);
+    // TODO convert types
+    int assignTemporary = ir.getTemporary(IRBaseTypes.BOOLEAN);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("==", type, assignTemporary, leftTemporary, rightTemporary);
+    ir.addInstruction(equalsInst);
+    return assignTemporary;
+  }
   public Object visit(LessThanExpr lessThanExpr){return null;}
   public Object visit(AddExpr lessThanExpr){return null;}
   public Object visit(SubtractExpr lessThanExpr){return null;}
