@@ -1,3 +1,7 @@
+int foo(){
+  return 1;
+}
+
 void main(){
   int i;
   int j;
@@ -49,5 +53,6 @@ void main(){
     println i;
     i = i + 1;
   }
-  print "done";
+  println foo();
+  println "done";
 }
