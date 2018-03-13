@@ -160,16 +160,48 @@ public class IRVisitor implements Visitor{
     MutInt leftTemporary = new MutInt((Integer)equalsExpr.left.accept(this));
     MutInt rightTemporary = new MutInt((Integer)equalsExpr.right.accept(this));
     IRType type = convertTypes(leftTemporary, rightTemporary);
-    // TODO convert types
+
     int assignTemporary = ir.getTemporary(IRBaseTypes.BOOLEAN);
     IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("==", type, assignTemporary, leftTemporary.value, rightTemporary.value);
     ir.addInstruction(equalsInst);
     return assignTemporary;
   }
-  public Object visit(LessThanExpr lessThanExpr){return null;}
-  public Object visit(AddExpr lessThanExpr){return null;}
-  public Object visit(SubtractExpr lessThanExpr){return null;}
-  public Object visit(MultExpr multExpr){return null;}
+  public Object visit(LessThanExpr lessThanExpr){
+    MutInt leftTemporary = new MutInt((Integer)lessThanExpr.left.accept(this));
+    MutInt rightTemporary = new MutInt((Integer)lessThanExpr.right.accept(this));
+    IRType type = convertTypes(leftTemporary, rightTemporary);
+    int assignTemporary = ir.getTemporary(IRBaseTypes.BOOLEAN);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("<", type, assignTemporary, leftTemporary.value, rightTemporary.value);
+    ir.addInstruction(equalsInst);
+    return assignTemporary;
+  }
+  public Object visit(AddExpr addExpr){
+    MutInt leftTemporary = new MutInt((Integer)addExpr.left.accept(this));
+    MutInt rightTemporary = new MutInt((Integer)addExpr.right.accept(this));
+    IRType type = convertTypes(leftTemporary, rightTemporary);
+    int assignTemporary = ir.getTemporary(type);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("+", type, assignTemporary, leftTemporary.value, rightTemporary.value);
+    ir.addInstruction(equalsInst);
+    return assignTemporary;
+  }
+  public Object visit(SubtractExpr subtractExpr){
+    MutInt leftTemporary = new MutInt((Integer)subtractExpr.left.accept(this));
+    MutInt rightTemporary = new MutInt((Integer)subtractExpr.right.accept(this));
+    IRType type = convertTypes(leftTemporary, rightTemporary);
+    int assignTemporary = ir.getTemporary(type);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("-", type, assignTemporary, leftTemporary.value, rightTemporary.value);
+    ir.addInstruction(equalsInst);
+    return assignTemporary;
+  }
+  public Object visit(MultExpr multExpr){
+    MutInt leftTemporary = new MutInt((Integer)multExpr.left.accept(this));
+    MutInt rightTemporary = new MutInt((Integer)multExpr.right.accept(this));
+    IRType type = convertTypes(leftTemporary, rightTemporary);
+    int assignTemporary = ir.getTemporary(type);
+    IRAssignInstruction equalsInst = AssignmentFactory.createBinaryOp("*", type, assignTemporary, leftTemporary.value, rightTemporary.value);
+    ir.addInstruction(equalsInst);
+    return assignTemporary;
+  }
   public Object visit(StringLiteral stringLiteral){
     int temporary = ir.getTemporary(IRBaseTypes.STRING);
     IRAssignInstruction constantAssignment = AssignmentFactory.createConstantAssignment(temporary, stringLiteral);

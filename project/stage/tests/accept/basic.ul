@@ -21,6 +21,10 @@ void main(){
   b = arr[4] == i;
   b = f == i;
   println b;
-  b = i == f;
+  b = i < f;
   println b;
+  j = i + i + i;
+  println j;
+  j = j * i - i;
+  println j;
 }
