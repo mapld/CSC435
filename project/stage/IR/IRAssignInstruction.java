@@ -89,6 +89,13 @@ public class IRAssignInstruction extends IRInstruction{
       repr += "T";
       repr += rightTemp;
       break;
+    case ARRAY_TO_OP:
+      repr += "T";
+      repr += leftTemp;
+      repr += " := ";
+      repr += "T" + rightTemp + "[";
+      repr += "T" + indexTemp + "]";
+      break;
     case NEWARRAY:
       repr += "T";
       repr += leftTemp;

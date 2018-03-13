@@ -152,7 +152,15 @@ public class IRVisitor implements Visitor{
     ir.addInstruction(constantAssignment);
     return temporary;
   }
-  public Object visit(ArrayReference arrayReference){return null;}
+  public Object visit(ArrayReference arrayReference){
+    int indexTemporary = (Integer)arrayReference.expr.accept(this);
+    int rightTemporary = temporariesTable.get(arrayReference.id.name);
+    IRType type = ir.getTemporaryType(rightTemporary);
+    int leftTemporary = ir.getTemporary(type);
+    IRAssignInstruction assignment = AssignmentFactory.createAssignmentFromArray(leftTemporary, rightTemporary, indexTemporary);
+    ir.addInstruction(assignment);
+    return leftTemporary;
+  }
   public Object visit(FunctionCall functionCall){return null;}
   public Object visit(ExprList exprList){return null;}
   public Object visit(ParenExpr parenExpr){return null;}

@@ -14,7 +14,7 @@ void main(){
   b = true;
   arr[4] = 333;
   println 1;
-  j = i;
+  j = arr[4];
   print j;
   print i;
   println "hello";
