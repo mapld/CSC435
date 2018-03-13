@@ -107,7 +107,13 @@ public class IRVisitor implements Visitor{
     ir.addInstruction(printInstruction);
     return null;
   }
-  public Object visit(PrintlnStatement printlnStatement){return null;}
+  public Object visit(PrintlnStatement printlnStatement){
+    int temporaryResult = (Integer)printlnStatement.expr.accept(this);
+    IRBaseTypes baseType = ir.getTemporaryType(temporaryResult).baseType;
+    IRPrintInstruction printInstruction = new IRPrintInstruction(true, baseType, temporaryResult);
+    ir.addInstruction(printInstruction);
+    return null;
+  }
   public Object visit(ReturnStatement returnStatement){return null;}
   public Object visit(Block block){return null;}
   public Object visit(EqualsExpr equalsExpr){return null;}
