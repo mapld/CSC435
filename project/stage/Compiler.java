@@ -9,6 +9,8 @@ import org.antlr.runtime.*;
 import java.io.*;
 import AST.*;
 import IR.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class Compiler {
 	public static void main (String[] args) throws Exception {
@@ -21,6 +23,11 @@ public class Compiler {
 		else {
       input = new ANTLRInputStream(new FileInputStream(args[0]));
 		}
+
+    String progName = (new File(args[0])).getName();
+    if(progName.indexOf(".") > 0){
+      progName = progName.substring(0, progName.lastIndexOf("."));
+    }
 
 		// The name of the grammar here is "ulNoActions",
 		// so ANTLR generates ulNoActionsLexer and ulNoActionsParser
@@ -35,9 +42,9 @@ public class Compiler {
       if(typeCheckVisitor.semanticErrors.size() > 0){
         return;
       }
-      IRVisitor irVisitor = new IRVisitor();
+      IRVisitor irVisitor = new IRVisitor(progName);
       IR ir = (IR)program.accept(irVisitor);
-      ir.printIR();
+      ir.printIR("tests/ir/" + progName + ".ir");
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.

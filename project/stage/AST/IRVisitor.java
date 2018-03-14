@@ -11,9 +11,15 @@ public class IRVisitor implements Visitor{
   Map<String, Integer> temporariesTable;
   Map<String, IRType> functionTypeTable;
   IR ir;
+  String progName;
+
+  public IRVisitor(String progName){
+    this.progName = progName;
+  }
+
   public Object visit(Program p){
     functionTypeTable = new HashMap<String, IRType>();
-    ir = new IR("test");
+    ir = new IR(progName);
     for(int i = 0; i < p.size(); i++){
       Function f = p.elementAt(i);
       IRType type = (IRType)f.functionDecl.type.accept(this);

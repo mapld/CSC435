@@ -1,6 +1,9 @@
 package IR;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class IR{
   List<IRFunction> functions;
@@ -12,30 +15,39 @@ public class IR{
     functions = new ArrayList<IRFunction>();
   }
 
-  public void printIR(){
-    System.out.println("PROG " + name);
+  public void printIR(String filename){
+    try{
+    PrintWriter pw = new PrintWriter(new FileWriter(filename));
+
+    pw.println("PROG " + name);
 
     for(int i = 0; i < functions.size(); i++){
       IRFunction function = functions.get(i);
       // print function decl
-      System.out.println(function);
+      pw.println(function);
 
-      System.out.println("{");
+      pw.println("{");
 
       // print temporaries
       List<IRType> temps = function.temporaries;
       for(int j = 0; j < temps.size(); j++){
         IRType type = temps.get(j);
-        System.out.println("  TEMP " + j + ":" + type.toString() + ";");
+        pw.println("  TEMP " + j + ":" + type.toString() + ";");
       }
 
       // print instructions
       List<IRInstruction> instructions = function.instructions;
       for(int j = 0; j < instructions.size(); j++){
-        System.out.println(instructions.get(j).toString() + ";");
+        pw.println(instructions.get(j).toString() + ";");
       }
 
-      System.out.println("}");
+      pw.println("}");
+      pw.flush();
+    }
+    }
+    catch(IOException e){
+      System.out.println(e);
+      return;
     }
   }
 

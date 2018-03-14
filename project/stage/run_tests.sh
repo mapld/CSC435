@@ -78,10 +78,29 @@ do
     fi
 done
 
-if [ $fail_counter -eq 0 -a $reject_fail_counter -eq 0 -a $pretty_fail_counter -eq 0 ]
+echo -e "${BLUE}Checking IR"
+ir_success_counter=0;
+ir_fail_counter=0;
+FAIL=""
+for f in tests/ir/*.ir
+do
+    C_OUTPUT="$(./codegen --file=$f) > tmp.j"
+    J_OUTPUT="$(java jasmin.Main tmp.j 2>&1)"
+    if [ -z "$C_OUTPUT" -a -z "$J_OUTPUT"]
+    then
+        ir_success_counter=$((ir_success_counter+1))
+        echo -e "${GREEN}IR in $f read successfully"
+    else
+        ir_fail_counter=$((ir_fail_counter+1))
+        echo -e "${RED}Failed to parse $f with errors: "
+        echo -e "${RED}${C_OUTPUT}"
+        echo -e "${RED}${J_OUTPUT}"
+    fi
+done
+
+if [ $fail_counter -eq 0 -a $reject_fail_counter -eq 0 -a $pretty_fail_counter -eq 0 -a $ir_fail_counter -eq 0 ]
 then
     echo -e "${BLUE}Tests ran - ${GREEN}Success!"
 else
     echo -e "${BLUE}Tests ran - ${RED}Failed"
 fi
-
