@@ -190,10 +190,13 @@ public class IRVisitor implements Visitor{
     return null;
   }
   public Object visit(ReturnStatement returnStatement){
-    int returnOperand = (Integer)returnStatement.expr.accept(this);
-    IRType returnType = ir.getTemporaryType(returnOperand);
+    int returnOperand = -1;
+    if(returnStatement.expr != null){
+      returnOperand = (Integer)returnStatement.expr.accept(this);
+    }
+    // IRType returnType = ir.getTemporaryType(returnOperand);
     IRReturnInstruction returnInst;
-    if(returnType.baseType == IRBaseTypes.VOID){
+    if(returnOperand >= 0){
       returnInst = new IRReturnInstruction();
     }
     else{

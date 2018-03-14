@@ -3,7 +3,7 @@ FUNC foo ()I
 {
   TEMP 0:I;
   T0 := 1;
-  RETURN T0;
+  RETURN;
 }
 FUNC main ()V
 {
