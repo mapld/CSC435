@@ -183,7 +183,19 @@ public class IRVisitor implements Visitor{
     ir.addInstruction(printInstruction);
     return null;
   }
-  public Object visit(ReturnStatement returnStatement){return null;}
+  public Object visit(ReturnStatement returnStatement){
+    int returnOperand = (Integer)returnStatement.expr.accept(this);
+    IRType returnType = ir.getTemporaryType(returnOperand);
+    IRReturnInstruction returnInst;
+    if(returnType.baseType == IRBaseTypes.VOID){
+      returnInst = new IRReturnInstruction();
+    }
+    else{
+      returnInst = new IRReturnInstruction(returnOperand);
+    }
+    ir.addInstruction(returnInst);
+    return null;
+  }
   public Object visit(Block block){
     for(int i = 0; i < block.numStatements(); i++){
       block.statementAt(i).accept(this);
@@ -327,5 +339,7 @@ public class IRVisitor implements Visitor{
     }
     return operands;
   }
-  public Object visit(ParenExpr parenExpr){return null;}
+  public Object visit(ParenExpr parenExpr){
+    return parenExpr.innerExpr.accept(this);
+  }
 }
