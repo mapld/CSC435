@@ -42,6 +42,11 @@ public class IRVisitor implements Visitor{
 
     f.functionDecl.accept(this);
     f.functionBody.accept(this);
+
+    if(functionTypeTable.get(f.functionDecl.id.name).baseType == IRBaseTypes.VOID){
+      IRReturnInstruction returnInst = new IRReturnInstruction();
+      ir.addInstruction(returnInst);
+    }
     return null;
   }
   public Object visit(FunctionDecl fd){
