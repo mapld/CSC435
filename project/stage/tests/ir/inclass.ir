@@ -1,0 +1,19 @@
+PROG inclass
+FUNC foo (Z )V
+{
+  TEMP 0:Z;
+  TEMP 1:I;
+  TEMP 2:Z;
+  TEMP 3:I;
+  T2 := Z! T0;
+  IF T2 GOTO L0;
+  T3 := 9;
+  T1 := T3;
+L0:;
+  PRINTLNI T1;
+  RETURN;
+}
+FUNC main ()V
+{
+  RETURN;
+}

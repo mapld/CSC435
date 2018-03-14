@@ -1,0 +1,17 @@
+PROG type_assignments
+FUNC main ()V
+{
+  TEMP 0:I;
+  TEMP 1:Z;
+  TEMP 2:AI;
+  TEMP 3:AI;
+  TEMP 4:I;
+  TEMP 5:Z;
+  T2 := NEWARRAY I 10;
+  T3 := NEWARRAY I 10;
+  T2 := T3;
+  T4 := 5;
+  T5 := T0 I< T4;
+  T1 := T5;
+  RETURN;
+}

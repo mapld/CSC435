@@ -1,0 +1,34 @@
+PROG types
+FUNC func (U F )Z
+{
+  TEMP 0:U;
+  TEMP 1:F;
+  TEMP 2:Z;
+  TEMP 3:U;
+  TEMP 4:Z;
+  PRINTF T1;
+  T3 := "bob";
+  T4 := T0 U== T3;
+  T2 := T4;
+  RETURN T2;
+}
+FUNC main ()V
+{
+  TEMP 0:C;
+  TEMP 1:F;
+  TEMP 2:U;
+  TEMP 3:Z;
+  TEMP 4:I;
+  TEMP 5:U;
+  TEMP 6:F;
+  TEMP 7:F;
+  TEMP 8:F;
+  TEMP 9:Z;
+  T5 := "bob";
+  T2 := T5;
+  T6 := 50.0;
+  T9 := CALL func(T2 T6 );
+  PRINTZ T9;
+  RETURN;
+  RETURN;
+}

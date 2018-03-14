@@ -1,0 +1,49 @@
+PROG wSt_3.1_valid
+FUNC main ()V
+{
+  TEMP 0:Z;
+  TEMP 1:I;
+  TEMP 2:F;
+  TEMP 3:Z;
+  TEMP 4:Z;
+  TEMP 5:U;
+  TEMP 6:Z;
+  TEMP 7:Z;
+  TEMP 8:U;
+  TEMP 9:Z;
+  TEMP 10:I;
+  TEMP 11:U;
+  TEMP 12:F;
+  T3 := TRUE;
+  T4 := Z! T3;
+  IF T4 GOTO L0;
+  T5 := "true if statement";
+  PRINTU T5;
+L0:;
+  T6 := TRUE;
+  T0 := T6;
+L1:;
+  T7 := Z! T0;
+  IF T7 GOTO L2;
+  T8 := "looping while once";
+  PRINTU T8;
+  T9 := FALSE;
+  T0 := T9;
+  GOTO L1;
+L2:;
+  T10 := 5;
+  PRINTI T10;
+  T11 := "new line";
+  PRINTLNU T11;
+  T12 := I2F T1;
+  T2 := T12;
+  RETURN;
+}
+FUNC foo ()F
+{
+  TEMP 0:I;
+  TEMP 1:I;
+  T1 := 5;
+  T0 := T1;
+  RETURN T0;
+}

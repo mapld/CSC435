@@ -1,0 +1,35 @@
+PROG function_params
+FUNC func (I F C U )I
+{
+  TEMP 0:I;
+  TEMP 1:F;
+  TEMP 2:C;
+  TEMP 3:U;
+  TEMP 4:I;
+  TEMP 5:I;
+  PRINTLNI T0;
+  PRINTLNF T1;
+  PRINTLNC T2;
+  PRINTLNU T3;
+  T4 := T0 I* T0;
+  T5 := T4 I+ T0;
+  RETURN T5;
+}
+FUNC main ()V
+{
+  TEMP 0:I;
+  TEMP 1:F;
+  TEMP 2:C;
+  TEMP 3:U;
+  TEMP 4:F;
+  TEMP 5:F;
+  TEMP 6:F;
+  TEMP 7:F;
+  TEMP 8:I;
+  T0 := 1;
+  T1 := 0.1;
+  T2 := 'd';
+  T3 := "Running a function with parameters";
+  T8 := CALL func(T0 T1 T2 T3 );
+  RETURN;
+}

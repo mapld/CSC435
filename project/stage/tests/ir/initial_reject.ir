@@ -1,0 +1,5 @@
+PROG initial_reject
+FUNC main ()V
+{
+  RETURN;
+}

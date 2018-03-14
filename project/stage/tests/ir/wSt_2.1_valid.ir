@@ -1,0 +1,13 @@
+PROG wSt_2.1_valid
+FUNC main ()V
+{
+  RETURN;
+}
+FUNC foo1 (F )I
+{
+  TEMP 0:F;
+}
+FUNC foo2 (F )I
+{
+  TEMP 0:F;
+}

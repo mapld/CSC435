@@ -32,4 +32,5 @@ FUNC main ()V
   T13 := T0[T12];
   PRINTI T13;
   PRINTF T2;
+  RETURN;
 }

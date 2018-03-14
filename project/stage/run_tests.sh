@@ -86,7 +86,7 @@ for f in tests/ir/*.ir
 do
     C_OUTPUT="$(./codegen --file=$f > tmp.j)"
     J_OUTPUT="$(java jasmin.Main tmp.j 2>&1)"
-    if [[ -z "$C_OUTPUT" ]] && [[-z "$J_OUTPUT"]]
+    if [[ -z "$C_OUTPUT" ]] && [[ -z "$J_OUTPUT" ]];
     then
         ir_success_counter=$((ir_success_counter+1))
         echo -e "${GREEN}IR in $f read successfully"

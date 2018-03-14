@@ -1,0 +1,5 @@
+PROG comments
+FUNC main ()V
+{
+  RETURN;
+}

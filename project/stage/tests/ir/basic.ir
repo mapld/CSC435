@@ -3,7 +3,7 @@ FUNC foo ()I
 {
   TEMP 0:I;
   T0 := 1;
-  RETURN;
+  RETURN T0;
 }
 FUNC main ()V
 {
@@ -141,4 +141,5 @@ L5:;
   PRINTLNI T45;
   T46 := "done";
   PRINTLNU T46;
+  RETURN;
 }

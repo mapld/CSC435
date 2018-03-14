@@ -1,0 +1,11 @@
+PROG function_decl
+FUNC thang (I )V
+{
+  TEMP 0:I;
+  RETURN;
+}
+FUNC main ()V
+{
+  RETURN;
+  RETURN;
+}

@@ -1,0 +1,16 @@
+PROG float_to_int
+FUNC main ()V
+{
+  TEMP 0:I;
+  TEMP 1:F;
+  TEMP 2:I;
+  TEMP 3:F;
+  TEMP 4:F;
+  T2 := 1;
+  T0 := T2;
+  T3 := 1.0;
+  T1 := T3;
+  T4 := I2F T0;
+  T1 := T4;
+  RETURN;
+}

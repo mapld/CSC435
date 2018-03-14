@@ -1,0 +1,10 @@
+PROG identifiers
+FUNC main ()V
+{
+  TEMP 0:I;
+  TEMP 1:U;
+  TEMP 2:F;
+  TEMP 3:C;
+  RETURN;
+  RETURN;
+}

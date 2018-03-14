@@ -1,0 +1,17 @@
+PROG strings
+FUNC main ()V
+{
+  TEMP 0:U;
+  TEMP 1:U;
+  TEMP 2:U;
+  TEMP 3:U;
+  TEMP 4:U;
+  TEMP 5:U;
+  T3 := "abc";
+  T0 := T3;
+  T4 := "";
+  T1 := T4;
+  T5 := "__ __ aa __ AA __ BB      ccsdfdfSDsfdsfdsf____dfds";
+  T2 := T5;
+  RETURN;
+}

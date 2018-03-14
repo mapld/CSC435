@@ -1,0 +1,79 @@
+PROG compound_types
+FUNC doMath (AF F I )Z
+{
+  TEMP 0:AF;
+  TEMP 1:F;
+  TEMP 2:I;
+  TEMP 3:I;
+  TEMP 4:I;
+  TEMP 5:Z;
+  TEMP 6:Z;
+  TEMP 7:F;
+  TEMP 8:F;
+  TEMP 9:I;
+  TEMP 10:I;
+  TEMP 11:Z;
+  T4 := 0;
+  T3 := T4;
+L0:;
+  T5 := T3 I< T2;
+  T6 := Z! T5;
+  IF T6 GOTO L1;
+  T7 := T0[T3];
+  T8 := T7 F* T1;
+  T0[T3] := T8;
+  T9 := 1;
+  T10 := T3 I+ T9;
+  T3 := T10;
+  GOTO L0;
+L1:;
+  T11 := TRUE;
+  RETURN T11;
+}
+FUNC main ()V
+{
+  TEMP 0:AI;
+  TEMP 1:AU;
+  TEMP 2:AC;
+  TEMP 3:AZ;
+  TEMP 4:AF;
+  TEMP 5:F;
+  TEMP 6:I;
+  TEMP 7:I;
+  TEMP 8:F;
+  TEMP 9:I;
+  TEMP 10:F;
+  TEMP 11:F;
+  TEMP 12:F;
+  TEMP 13:Z;
+  TEMP 14:Z;
+  TEMP 15:Z;
+  TEMP 16:Z;
+  TEMP 17:U;
+  TEMP 18:U;
+  T0 := NEWARRAY I 5;
+  T1 := NEWARRAY U 3333;
+  T2 := NEWARRAY C 50;
+  T3 := NEWARRAY Z 300;
+  T4 := NEWARRAY F 1000;
+  T5 := 1.5;
+  T6 := 0;
+  T4[T6] := T5;
+  T7 := 0;
+  T8 := T4[T7];
+  T9 := 100;
+  T13 := CALL doMath(T4 T8 T9 );
+  T14 := TRUE;
+  T15 := T13 Z== T14;
+  T16 := Z! T15;
+  IF T16 GOTO L0;
+  T17 := "Yes";
+  PRINTLNU T17;
+  GOTO L1;
+L0:;
+  T18 := "No";
+  PRINTLNU T18;
+L1:;
+  RETURN;
+  RETURN;
+}
