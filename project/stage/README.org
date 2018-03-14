@@ -1,8 +1,14 @@
 * CSC435 Compiler
-This implements up to assignment 2 of CSC435. The compiler uses an antlr grammar, an implemented AST, a pretty print visitor, and a type check visitor. This includes the bonus of interpreting int as a subtype of float.  
-  
+This implements up to assignment 3 of CSC435. 
+The compiler uses an antlr grammar, an implemented AST, a pretty print visitor, and a type check visitor. This includes the bonus of interpreting int as a subtype of float.  
+The resulting AST is then converted to IR by the IRVisitor. This IR is outputted in tests/ir/<filename>.ir
+
 ** Commands:
 - make to build
-- java Compiler filename.ul to compile a ul file (now including Type Checking!)
+- java Compiler filename.ul to compile a ul file 
 - java PrettyPrinter filename.ul to pretty print a ul file using the compiler
 - run_tests.sh runs make and all test cases
+
+when a file, ie filename.ul, is compiled:
+1. Any errors will be printed to the screen
+2. The resulting IR will be output to the directory tests/ir, ie tests/ir/filename.ir
