@@ -22,7 +22,7 @@ do
         echo -e "${GREEN}Accepted $f"
     else
         fail_counter=$((fail_counter+1))
-        echo -e "${RED}Failed running $f with errors: "
+        echo -e "${RED}Failed compiling $f with errors: "
         echo -e "${RED}${OUTPUT}"
     fi
 done
@@ -84,9 +84,9 @@ ir_fail_counter=0;
 FAIL=""
 for f in tests/ir/*.ir
 do
-    C_OUTPUT="$(./codegen --file=$f) > tmp.j"
+    C_OUTPUT="$(./codegen --file=$f > tmp.j)"
     J_OUTPUT="$(java jasmin.Main tmp.j 2>&1)"
-    if [ -z "$C_OUTPUT" -a -z "$J_OUTPUT"]
+    if [[ -z "$C_OUTPUT" ]] && [[-z "$J_OUTPUT"]]
     then
         ir_success_counter=$((ir_success_counter+1))
         echo -e "${GREEN}IR in $f read successfully"
