@@ -93,17 +93,19 @@ public class IRVisitor implements Visitor{
   }
   public Object visit(AssignStatement assignStatement){
     // whatever is on the right of the assign statement will be visited and put its result in a temporary which will be returned
-    int leftTemp = temporariesTable.get(assignStatement.id.name);
-    int rightTemp = (Integer)assignStatement.expr.accept(this);
-    IRAssignInstruction assignment = AssignmentFactory.createOperandAssignment(leftTemp, rightTemp);
+    MutInt leftTemp = new MutInt(temporariesTable.get(assignStatement.id.name));
+    MutInt rightTemp = new MutInt((Integer)assignStatement.expr.accept(this));
+    IRType type = convertTypes(leftTemp, rightTemp);
+
+    IRAssignInstruction assignment = AssignmentFactory.createOperandAssignment(leftTemp.value, rightTemp.value);
     ir.addInstruction(assignment);
     return null;
   }
   public Object visit(ArrayAssignStatement assignStatement){
-    int leftTemp = temporariesTable.get(assignStatement.id.name);
-    int rightTemp = (Integer)assignStatement.assignExpr.accept(this);
+    MutInt leftTemp = new MutInt(temporariesTable.get(assignStatement.id.name));
+    MutInt rightTemp = new MutInt((Integer)assignStatement.assignExpr.accept(this));
     int indexTemp = (Integer)assignStatement.indexExpr.accept(this);
-    IRAssignInstruction assignment = AssignmentFactory.createArrayAssignment(leftTemp, indexTemp, rightTemp);
+    IRAssignInstruction assignment = AssignmentFactory.createArrayAssignment(leftTemp.value, indexTemp, rightTemp.value);
     ir.addInstruction(assignment);
     return null;
   }
@@ -197,10 +199,10 @@ public class IRVisitor implements Visitor{
     // IRType returnType = ir.getTemporaryType(returnOperand);
     IRReturnInstruction returnInst;
     if(returnOperand >= 0){
-      returnInst = new IRReturnInstruction();
+      returnInst = new IRReturnInstruction(returnOperand);
     }
     else{
-      returnInst = new IRReturnInstruction(returnOperand);
+      returnInst = new IRReturnInstruction();
     }
     ir.addInstruction(returnInst);
     return null;
