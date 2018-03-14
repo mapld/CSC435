@@ -24,6 +24,11 @@ public class IRVisitor implements Visitor{
       Function f = p.elementAt(i);
       IRType type = (IRType)f.functionDecl.type.accept(this);
       functionTypeTable.put(f.functionDecl.id.name, type);
+      for(int j = 0; j < f.functionDecl.params.size(); j++){
+        Parameter param = f.functionDecl.params.getAt(j);
+        IRType currentType = (IRType)param.type.accept(this);
+        functionTypeTable.put(f.functionDecl.id.name + j, currentType);
+      }
     }
     for(int i = 0; i < p.size(); i++){
       Function f = p.elementAt(i);
@@ -329,6 +334,24 @@ public class IRVisitor implements Visitor{
   }
   public Object visit(FunctionCall functionCall){
     List<Integer> operands = (List<Integer>)functionCall.exprList.accept(this);
+    List<Integer> newOperands = new ArrayList<Integer>();
+
+    for(int i = 0; i < operands.size(); i++){
+      IRType paramType = functionTypeTable.get(functionCall.id.name + i);
+      IRType callParamType = ir.getTemporaryType(operands.get(i));
+      int assignTemp = ir.getTemporary(IRBaseTypes.FLOAT);
+      if(paramType.baseType == IRBaseTypes.FLOAT && callParamType.baseType == IRBaseTypes.INT){
+        IRAssignInstruction convertInst = AssignmentFactory.createConversion(callParamType, paramType, operands.get(i), assignTemp);
+        ir.addInstruction(convertInst);
+        newOperands.add(assignTemp);
+      }
+      else{
+        newOperands.add(operands.get(i));
+      }
+    }
+
+    operands = newOperands;
+
     IRType returnType = functionTypeTable.get(functionCall.id.name);
     IRCallInstruction callInst;
     int assignOperand = -1;
@@ -346,7 +369,8 @@ public class IRVisitor implements Visitor{
     List<Integer> operands = new ArrayList<Integer>();
     for(int i = 0; i < exprList.size(); i++){
       Expr expr = exprList.getAt(i);
-      operands.add((Integer)expr.accept(this));
+      int operand = (Integer)expr.accept(this);
+      operands.add(operand);
     }
     return operands;
   }

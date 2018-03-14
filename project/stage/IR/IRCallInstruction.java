@@ -25,7 +25,7 @@ public class IRCallInstruction extends IRInstruction{
     }
     repr += "CALL " + functionName + "(";
     for(Integer operand : operands){
-      repr += "T" + operand;
+      repr += "T" + operand + " ";
     }
     repr += ")";
     return repr;

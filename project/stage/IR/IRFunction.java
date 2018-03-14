@@ -48,7 +48,7 @@ public class IRFunction{
     for(int i = 0; i < params.size(); i++){
       int tIndex = params.get(i);
       IRType type = temporaries.get(tIndex);
-      repr += type.toString();
+      repr += type.toString() + " ";
     }
     repr += ")";
     repr += returnType.toString();
