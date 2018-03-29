@@ -82,7 +82,7 @@ public class IR{
         for(int j = 0; j < function.params.size(); j++){
           int tIndex = function.params.get(j);
           IRType type = function.temporaries.get(tIndex);
-          typeList += type.toString();
+          typeList += jasminInfo.getTypeStringUpper(type);
         }
         pw.println(".method public static " + fname + "(" + typeList + ")" + function.returnType.toString());
 
@@ -93,7 +93,7 @@ public class IR{
         pw.println(".limit locals " + localCount);
         for(int j = 0; j < localCount; j++){
           IRType localType = function.temporaries.get(j);
-          pw.println(".var " + j + " is T" + j + " " + localType.toString() + " from L_" + startLabel + " to L_" + (startLabel + 1));
+          pw.println(".var " + j + " is T" + j + " " + jasminInfo.getTypeStringUpper(localType) + " from L_" + startLabel + " to L_" + (startLabel + 1));
         }
 
         int stackLimit = 16;

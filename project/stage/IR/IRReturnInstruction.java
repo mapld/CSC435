@@ -12,8 +12,11 @@ public class IRReturnInstruction extends IRInstruction{
     this.operand = operand;
   }
 
-  public void printJasmin(PrintWriter pw, JasminInfo jaasminInfo){
+  public void printJasmin(PrintWriter pw, JasminInfo ji){
     // TODO: returning things
+    if(operand >= 0){
+       pw.println(ji.loadInstr(ji.curFunction.temporaries.get(operand)) + operand); 
+    }
     pw.println("return");
   }
 

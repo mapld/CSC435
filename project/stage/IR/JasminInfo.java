@@ -8,20 +8,45 @@ public class JasminInfo{
   String className;
   Map<String,IRType> functionTypeMap;
 
+  static String getArrayType(IRType type){
+      if(type.baseType == IRBaseTypes.INT){
+          return "int";
+      }
+      return "";
+  }
+
+  static String getTypeStringUpper(IRType type){
+   String s = "";
+   if(type.isArray){
+       s += "[";
+   }
+   if(type.baseType == IRBaseTypes.STRING){
+       s += "Ljava/lang/String;";
+   }
+   else{
+       s += type.baseType.toString();
+   }
+   return s;
+  }
+
+  static String getTypeString(IRType type){
+   return type.toString().toLowerCase();
+  }
+
   static String loadInstr(IRType type){
-    return type.toString().toLowerCase() + "load ";
+    return getTypeString(type) + "load ";
   }
 
   static String storeInstr(IRType type){
-    return type.toString().toLowerCase() + "store ";
+    return getTypeString(type) + "store ";
   }
 
   static String subInstr(IRType type){
-    return type.toString().toLowerCase() + "sub";
+    return getTypeString(type) + "sub";
   }
 
   static String xorInstr(IRType type){
-    return type.toString().toLowerCase() + "xor";
+    return getTypeString(type) + "xor";
   }
 
   static String jLabel(int labelNum){

@@ -136,6 +136,11 @@ public class IRAssignInstruction extends IRInstruction{
       IRType storeType = ji.curFunction.temporaries.get(leftTemp);
       pw.println(ji.storeInstr(storeType) + leftTemp);
       break;
+    case NEWARRAY:
+      pw.println(ji.loadConstInstr(size));
+      pw.println("newarray " + ji.getArrayType(opType));
+      pw.println("astore " + leftTemp);
+      break;
     }
   }
 

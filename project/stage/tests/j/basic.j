@@ -10,6 +10,7 @@ L_0:
 ldc 1
 istore 0
 ;   RETURN T0
+iload 0
 return
 L_1:
 .end method
@@ -19,13 +20,13 @@ L_1:
 .var 0 is T0 I from L_2 to L_3
 .var 1 is T1 I from L_2 to L_3
 .var 2 is T2 F from L_2 to L_3
-.var 3 is T3 U from L_2 to L_3
+.var 3 is T3 Ljava/lang/String; from L_2 to L_3
 .var 4 is T4 Z from L_2 to L_3
 .var 5 is T5 C from L_2 to L_3
-.var 6 is T6 AI from L_2 to L_3
+.var 6 is T6 [I from L_2 to L_3
 .var 7 is T7 I from L_2 to L_3
 .var 8 is T8 F from L_2 to L_3
-.var 9 is T9 U from L_2 to L_3
+.var 9 is T9 Ljava/lang/String; from L_2 to L_3
 .var 10 is T10 C from L_2 to L_3
 .var 11 is T11 Z from L_2 to L_3
 .var 12 is T12 Z from L_2 to L_3
@@ -34,7 +35,7 @@ L_1:
 .var 15 is T15 I from L_2 to L_3
 .var 16 is T16 I from L_2 to L_3
 .var 17 is T17 I from L_2 to L_3
-.var 18 is T18 U from L_2 to L_3
+.var 18 is T18 Ljava/lang/String; from L_2 to L_3
 .var 19 is T19 I from L_2 to L_3
 .var 20 is T20 I from L_2 to L_3
 .var 21 is T21 Z from L_2 to L_3
@@ -53,19 +54,22 @@ L_1:
 .var 34 is T34 Z from L_2 to L_3
 .var 35 is T35 I from L_2 to L_3
 .var 36 is T36 I from L_2 to L_3
-.var 37 is T37 U from L_2 to L_3
+.var 37 is T37 Ljava/lang/String; from L_2 to L_3
 .var 38 is T38 I from L_2 to L_3
 .var 39 is T39 I from L_2 to L_3
 .var 40 is T40 Z from L_2 to L_3
 .var 41 is T41 Z from L_2 to L_3
-.var 42 is T42 U from L_2 to L_3
+.var 42 is T42 Ljava/lang/String; from L_2 to L_3
 .var 43 is T43 I from L_2 to L_3
 .var 44 is T44 I from L_2 to L_3
 .var 45 is T45 I from L_2 to L_3
-.var 46 is T46 U from L_2 to L_3
+.var 46 is T46 Ljava/lang/String; from L_2 to L_3
 .limit stack 16
 L_2:
 ;   T6 := NEWARRAY I 5
+ldc 5
+newarray int
+astore 6
 ;   T7 := 1
 ldc 1
 istore 7
