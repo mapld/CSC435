@@ -1,6 +1,7 @@
 package IR;
 
 import java.util.List;
+import java.io.PrintWriter;
 
 public class IRCallInstruction extends IRInstruction{
   int assignOperand = -1; // return value assigned to this temporary
@@ -16,6 +17,17 @@ public class IRCallInstruction extends IRInstruction{
     this.functionName = functionName;
     this.operands = operands;
     this.assignOperand = assignOperand;
+  }
+
+  public void printJasmin(PrintWriter pw, JasminInfo ji){
+    String paramTypes = "";
+    String returnType = ji.functionTypeMap.get(functionName).toString();
+    for(Integer operand : operands){
+      IRType curType = ji.curFunction.temporaries.get(operand);
+      pw.println(ji.loadInstr(curType) + operand);
+      paramTypes += curType.toString();
+    }
+    pw.println("invokestatic " + ji.className + "/" + functionName + "(" + paramTypes + ")" + returnType);
   }
 
   public String toString(){

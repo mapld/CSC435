@@ -2,6 +2,7 @@ package IR;
 import AST.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.PrintWriter;
 
 public class IRAssignInstruction extends IRInstruction{
   public enum AssignTypes{
@@ -86,6 +87,57 @@ public class IRAssignInstruction extends IRInstruction{
   public IRType opType;
   public IRType toType;
   public Literal constant;
+
+
+  public void printJasminBinaryOp(PrintWriter pw, JasminInfo ji){
+    // TODO: add other binary ops
+    switch(binaryOp){
+    case SMALLER:
+      pw.println(ji.loadInstr(opType) + leftTemp);
+      pw.println(ji.loadInstr(opType) + rightTemp);
+      pw.println(ji.subInstr(opType));
+
+      int firstLabel = ji.getLabel();
+      int secondLabel = ji.getLabel();
+
+      pw.println("iflt " + ji.jLabel(firstLabel));
+      pw.println(ji.loadConstInstr(0));
+      pw.println("goto " + ji.jLabel(secondLabel));
+      pw.println(ji.labelInstr(firstLabel));
+      pw.println(ji.loadConstInstr(1));
+      pw.println(ji.labelInstr(secondLabel));
+      pw.println(ji.storeInstr(opType) + indexTemp);
+
+      break;
+    }
+  }
+
+  public void printJasminUnaryOp(PrintWriter pw, JasminInfo ji){
+    switch(unaryOp){
+    case INVERSION:
+      pw.println("iload " + rightTemp);
+      pw.println(ji.loadConstInstr(1));
+      pw.println("ixor");
+      pw.println("istore " + leftTemp);
+      break;
+    }
+  }
+
+  public void printJasmin(PrintWriter pw, JasminInfo ji){
+    switch(type){
+    case BINARY_OP:
+      printJasminBinaryOp(pw, ji);
+      break;
+    case UNARY_OP:
+      printJasminUnaryOp(pw, ji);
+      break;
+    case CONST_TO_OP:
+      pw.println(ji.loadConstInstr(constant.toString()));
+      IRType storeType = ji.curFunction.temporaries.get(leftTemp);
+      pw.println(ji.storeInstr(storeType) + leftTemp);
+      break;
+    }
+  }
 
   public String toString(){
     String repr = "  ";

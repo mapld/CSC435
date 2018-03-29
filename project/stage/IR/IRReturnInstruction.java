@@ -1,4 +1,5 @@
 package IR;
+import java.io.PrintWriter;
 
 public class IRReturnInstruction extends IRInstruction{
   int operand = -1;
@@ -9,6 +10,11 @@ public class IRReturnInstruction extends IRInstruction{
 
   public IRReturnInstruction(int operand){
     this.operand = operand;
+  }
+
+  public void printJasmin(PrintWriter pw, JasminInfo jaasminInfo){
+    // TODO: returning things
+    pw.println("return");
   }
 
   public String toString(){

@@ -45,6 +45,7 @@ public class Compiler {
       IRVisitor irVisitor = new IRVisitor(progName);
       IR ir = (IR)program.accept(irVisitor);
       ir.printIR("tests/ir/" + progName + ".ir");
+      ir.printJasmin("tests/j/" + progName + ".j");
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.
