@@ -15,9 +15,21 @@ public class IRReturnInstruction extends IRInstruction{
   public void printJasmin(PrintWriter pw, JasminInfo ji){
     // TODO: returning things
     if(operand >= 0){
-       pw.println(ji.loadInstr(ji.curFunction.temporaries.get(operand)) + operand); 
+       pw.println(ji.loadInstr(ji.curFunction.temporaries.get(operand)) + operand);
+       IRType type = ji.curFunction.temporaries.get(operand);
+       if(type.isArray){
+         pw.println("areturn");
+       }
+       else if(type.baseType == IRBaseTypes.FLOAT){
+         pw.println("freturn");
+       }
+       else{
+         pw.println("ireturn");
+       }
     }
-    pw.println("return");
+    else{
+      pw.println("return");
+    }
   }
 
   public String toString(){

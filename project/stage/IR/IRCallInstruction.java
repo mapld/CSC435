@@ -21,13 +21,17 @@ public class IRCallInstruction extends IRInstruction{
 
   public void printJasmin(PrintWriter pw, JasminInfo ji){
     String paramTypes = "";
-    String returnType = ji.functionTypeMap.get(functionName).toString();
+    IRType returnType = ji.functionTypeMap.get(functionName);
     for(Integer operand : operands){
       IRType curType = ji.curFunction.temporaries.get(operand);
       pw.println(ji.loadInstr(curType) + operand);
-      paramTypes += curType.toString();
+      paramTypes += ji.getTypeStringUpper(curType);
     }
-    pw.println("invokestatic " + ji.className + "/" + functionName + "(" + paramTypes + ")" + returnType);
+    pw.println("invokestatic " + ji.className + "/" + functionName + "(" + paramTypes + ")"
+               + ji.getTypeStringUpper(returnType));
+    if(assignOperand >= 0){
+      pw.println(ji.storeInstr(returnType) + assignOperand);
+    }
   }
 
   public String toString(){

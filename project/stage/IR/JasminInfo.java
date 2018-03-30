@@ -10,7 +10,16 @@ public class JasminInfo{
 
   static String getArrayType(IRType type){
       if(type.baseType == IRBaseTypes.INT){
-          return "int";
+        return "int";
+      }
+      if(type.baseType == IRBaseTypes.CHAR){
+        return "char";
+      }
+      if(type.baseType == IRBaseTypes.FLOAT){
+        return "float";
+      }
+      if(type.baseType == IRBaseTypes.BOOLEAN){
+        return "boolean";
       }
       return "";
   }
@@ -30,7 +39,20 @@ public class JasminInfo{
   }
 
   static String getTypeString(IRType type){
-   return type.toString().toLowerCase();
+   String s = type.baseType.toString().toLowerCase();
+   if(s.equals("u")){
+     s = "a";
+   }
+   else if(s.equals("c")){
+     s = "i";
+   }
+   if(s.equals("z")){
+     s = "i";
+   }
+   if(type.isArray){
+     s += "a";
+   }
+   return s;
   }
 
   static String loadInstr(IRType type){
@@ -43,6 +65,14 @@ public class JasminInfo{
 
   static String subInstr(IRType type){
     return getTypeString(type) + "sub";
+  }
+
+  static String addInstr(IRType type){
+    return getTypeString(type) + "add";
+  }
+
+  static String mulInstr(IRType type){
+    return getTypeString(type) + "mul";
   }
 
   static String xorInstr(IRType type){

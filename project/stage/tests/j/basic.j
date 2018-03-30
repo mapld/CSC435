@@ -11,7 +11,7 @@ ldc 1
 istore 0
 ;   RETURN T0
 iload 0
-return
+ireturn
 L_1:
 .end method
 
@@ -74,26 +74,38 @@ astore 6
 ldc 1
 istore 7
 ;   T0 := T7
+iload 7
+istore 0
 ;   T8 := 2.0
 ldc 2.0
 fstore 8
 ;   T2 := T8
+fload 8
+fstore 2
 ;   T9 := "Hello"
 ldc "Hello"
-ustore 9
+astore 9
 ;   T3 := T9
+aload 9
+astore 3
 ;   T10 := 'c'
-ldc 'c'
-cstore 10
+ldc 99
+istore 10
 ;   T5 := T10
+iload 10
+istore 5
 ;   T11 := FALSE
-ldc FALSE
-zstore 11
+ldc 0
+istore 11
 ;   T4 := T11
+iload 11
+istore 4
 ;   T12 := TRUE
-ldc TRUE
-zstore 12
+ldc 1
+istore 12
 ;   T4 := T12
+iload 12
+istore 4
 ;   T13 := 333
 ldc 333
 istore 13
@@ -101,18 +113,28 @@ istore 13
 ldc 4
 istore 14
 ;   T6[T14] := T13
+aload 6
+iload 14
+iload 13
+iastore 
 ;   T15 := 1
 ldc 1
 istore 15
 ;   PRINTLNI T15
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 15
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T16 := 4
 ldc 4
 istore 16
 ;   T17 := T6[T16]
+aload 6
+iload 16
+iaload 
+istore 17
 ;   T1 := T17
+iload 17
+istore 1
 ;   PRINTI T1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 1
@@ -123,55 +145,111 @@ iload 0
 invokevirtual java/io/PrintStream/print(I)V
 ;   T18 := "hello"
 ldc "hello"
-ustore 18
+astore 18
 ;   PRINTLNU T18
 getstatic java/lang/System/out Ljava/io/PrintStream;
-uload 18
-invokevirtual java/io/PrintStream/print(U)V
+aload 18
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 ;   T19 := 4
 ldc 4
 istore 19
 ;   T20 := T6[T19]
+aload 6
+iload 19
+iaload 
+istore 20
 ;   T21 := T20 I== T0
-;   T4 := T21
-;   T22 := I2F T0
-;   T23 := T2 F== T22
-;   T4 := T23
-;   PRINTLNZ T4
-getstatic java/lang/System/out Ljava/io/PrintStream;
-zload 4
-invokevirtual java/io/PrintStream/print(Z)V
-;   T24 := I2F T0
-;   T25 := T24 F< T2
-fload 24
-fload 2
-fsub
-iflt L_4
+iload 20
+iload 0
+isub
+ifeq L_4
 ldc 0
 goto L_5
 L_4:
 ldc 1
 L_5:
-fstore 25
-;   T4 := T25
+istore 21
+;   T4 := T21
+iload 21
+istore 4
+;   T22 := I2F T0
+iload 0
+i2f
+fstore 22
+;   T23 := T2 F== T22
+fload 2
+fload 22
+fcmpg
+ifeq L_6
+ldc 0
+goto L_7
+L_6:
+ldc 1
+L_7:
+istore 23
+;   T4 := T23
+iload 23
+istore 4
 ;   PRINTLNZ T4
 getstatic java/lang/System/out Ljava/io/PrintStream;
-zload 4
-invokevirtual java/io/PrintStream/print(Z)V
+iload 4
+invokevirtual java/io/PrintStream/println(Z)V
+;   T24 := I2F T0
+iload 0
+i2f
+fstore 24
+;   T25 := T24 F< T2
+fload 24
+fload 2
+fcmpg
+iflt L_8
+ldc 0
+goto L_9
+L_8:
+ldc 1
+L_9:
+istore 25
+;   T4 := T25
+iload 25
+istore 4
+;   PRINTLNZ T4
+getstatic java/lang/System/out Ljava/io/PrintStream;
+iload 4
+invokevirtual java/io/PrintStream/println(Z)V
 ;   T26 := T0 I+ T0
+iload 0
+iload 0
+iadd
+istore 26
 ;   T27 := T26 I+ T0
+iload 26
+iload 0
+iadd
+istore 27
 ;   T1 := T27
+iload 27
+istore 1
 ;   PRINTLNI T1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 1
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T28 := T1 I* T0
+iload 1
+iload 0
+imul
+istore 28
 ;   T29 := T28 I- T0
+iload 28
+iload 0
+isub
+istore 29
 ;   T1 := T29
+iload 29
+istore 1
 ;   PRINTLNI T1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 1
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T30 := Z! T4
 iload 4
 ldc 1
@@ -184,6 +262,8 @@ ifne L0
 ldc 500
 istore 31
 ;   T0 := T31
+iload 31
+istore 0
 ;   GOTO L1
 goto L1
 ; L0:
@@ -192,9 +272,11 @@ L0:
 ldc 600
 istore 32
 ;   T0 := T32
+iload 32
+istore 0
 ;   T33 := TRUE
-ldc TRUE
-zstore 33
+ldc 1
+istore 33
 ;   T34 := Z! T33
 iload 33
 ldc 1
@@ -207,6 +289,8 @@ ifne L2
 ldc 5
 istore 35
 ;   T1 := T35
+iload 35
+istore 1
 ;   GOTO L3
 goto L3
 ; L2:
@@ -215,29 +299,33 @@ L2:
 ldc 7
 istore 36
 ;   T1 := T36
+iload 36
+istore 1
 ; L3:
 L3:
 ;   T37 := "testing if statements"
 ldc "testing if statements"
-ustore 37
+astore 37
 ;   PRINTLNU T37
 getstatic java/lang/System/out Ljava/io/PrintStream;
-uload 37
-invokevirtual java/io/PrintStream/print(U)V
+aload 37
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 ; L1:
 L1:
 ;   PRINTLNI T0
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 0
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   PRINTLNI T1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 1
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T38 := 0
 ldc 0
 istore 38
 ;   T0 := T38
+iload 38
+istore 0
 ; L4:
 L4:
 ;   T39 := 5
@@ -247,12 +335,12 @@ istore 39
 iload 0
 iload 39
 isub
-iflt L_6
+iflt L_10
 ldc 0
-goto L_7
-L_6:
+goto L_11
+L_10:
 ldc 1
-L_7:
+L_11:
 istore 40
 ;   T41 := Z! T40
 iload 40
@@ -264,37 +352,44 @@ iload 41
 ifne L5
 ;   T42 := "counting "
 ldc "counting "
-ustore 42
+astore 42
 ;   PRINTU T42
 getstatic java/lang/System/out Ljava/io/PrintStream;
-uload 42
-invokevirtual java/io/PrintStream/print(U)V
+aload 42
+invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 ;   PRINTLNI T0
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 0
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T43 := 1
 ldc 1
 istore 43
 ;   T44 := T0 I+ T43
+iload 0
+iload 43
+iadd
+istore 44
 ;   T0 := T44
+iload 44
+istore 0
 ;   GOTO L4
 goto L4
 ; L5:
 L5:
 ;   T45 := CALL foo()
 invokestatic basic/foo()I
+istore 45
 ;   PRINTLNI T45
 getstatic java/lang/System/out Ljava/io/PrintStream;
 iload 45
-invokevirtual java/io/PrintStream/print(I)V
+invokevirtual java/io/PrintStream/println(I)V
 ;   T46 := "done"
 ldc "done"
-ustore 46
+astore 46
 ;   PRINTLNU T46
 getstatic java/lang/System/out Ljava/io/PrintStream;
-uload 46
-invokevirtual java/io/PrintStream/print(U)V
+aload 46
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 ;   RETURN
 return
 L_3:

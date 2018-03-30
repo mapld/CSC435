@@ -88,14 +88,23 @@ public class IRAssignInstruction extends IRInstruction{
   public IRType toType;
   public Literal constant;
 
+  public void cSubInstr(PrintWriter pw, JasminInfo ji, IRType type){
+    if(opType.baseType == IRBaseTypes.FLOAT){
+      pw.println("fcmpg");
+    }
+    else{
+      pw.println(ji.subInstr(opType));
+    }
+  }
 
   public void printJasminBinaryOp(PrintWriter pw, JasminInfo ji){
     // TODO: add other binary ops
     switch(binaryOp){
     case SMALLER:
+      {
       pw.println(ji.loadInstr(opType) + leftTemp);
       pw.println(ji.loadInstr(opType) + rightTemp);
-      pw.println(ji.subInstr(opType));
+      cSubInstr(pw,ji,opType);
 
       int firstLabel = ji.getLabel();
       int secondLabel = ji.getLabel();
@@ -106,8 +115,51 @@ public class IRAssignInstruction extends IRInstruction{
       pw.println(ji.labelInstr(firstLabel));
       pw.println(ji.loadConstInstr(1));
       pw.println(ji.labelInstr(secondLabel));
-      pw.println(ji.storeInstr(opType) + indexTemp);
+      pw.println("istore " + indexTemp);
+      }
 
+      break;
+    case EQUALS:
+      {
+      pw.println(ji.loadInstr(opType) + leftTemp);
+      pw.println(ji.loadInstr(opType) + rightTemp);
+      cSubInstr(pw,ji,opType);
+
+      int firstLabel = ji.getLabel();
+      int secondLabel = ji.getLabel();
+
+      pw.println("ifeq " + ji.jLabel(firstLabel));
+      pw.println(ji.loadConstInstr(0));
+      pw.println("goto " + ji.jLabel(secondLabel));
+      pw.println(ji.labelInstr(firstLabel));
+      pw.println(ji.loadConstInstr(1));
+      pw.println(ji.labelInstr(secondLabel));
+      pw.println("istore " + indexTemp);
+      }
+      break;
+    case PLUS:
+      {
+        pw.println(ji.loadInstr(opType) + leftTemp);
+        pw.println(ji.loadInstr(opType) + rightTemp);
+        pw.println(ji.addInstr(opType));
+        pw.println(ji.storeInstr(opType) + indexTemp);
+      }
+      break;
+    case MINUS:
+      {
+        pw.println(ji.loadInstr(opType) + leftTemp);
+        pw.println(ji.loadInstr(opType) + rightTemp);
+        pw.println(ji.subInstr(opType));
+        pw.println(ji.storeInstr(opType) + indexTemp);
+      }
+      break;
+    case MULTIPLY:
+      {
+        pw.println(ji.loadInstr(opType) + leftTemp);
+        pw.println(ji.loadInstr(opType) + rightTemp);
+        pw.println(ji.mulInstr(opType));
+        pw.println(ji.storeInstr(opType) + indexTemp);
+      }
       break;
     }
   }
@@ -119,6 +171,12 @@ public class IRAssignInstruction extends IRInstruction{
       pw.println(ji.loadConstInstr(1));
       pw.println("ixor");
       pw.println("istore " + leftTemp);
+      break;
+    case CONVERT:
+      // leftTemp = (opType -> toType) rightTemp
+      pw.println(ji.loadInstr(opType) + rightTemp);
+      pw.println(ji.getTypeString(opType) + "2" + ji.getTypeString(toType));
+      pw.println(ji.storeInstr(toType) + leftTemp);
       break;
     }
   }
@@ -132,7 +190,20 @@ public class IRAssignInstruction extends IRInstruction{
       printJasminUnaryOp(pw, ji);
       break;
     case CONST_TO_OP:
-      pw.println(ji.loadConstInstr(constant.toString()));
+      String constString = constant.toString();
+      if(constant instanceof CharLiteral){
+        constString = "" + (int)(((CharLiteral)constant).value);
+      }
+      if(constant instanceof BooleanLiteral){
+        BooleanLiteral bLit = (BooleanLiteral)constant;
+        if(bLit.value){
+          constString = ""+1;
+        }
+        else{
+          constString = ""+0;
+        }
+      }
+      pw.println(ji.loadConstInstr(constString));
       IRType storeType = ji.curFunction.temporaries.get(leftTemp);
       pw.println(ji.storeInstr(storeType) + leftTemp);
       break;
@@ -140,6 +211,24 @@ public class IRAssignInstruction extends IRInstruction{
       pw.println(ji.loadConstInstr(size));
       pw.println("newarray " + ji.getArrayType(opType));
       pw.println("astore " + leftTemp);
+      break;
+    case OP_TO_OP:
+      pw.println(ji.loadInstr(ji.curFunction.temporaries.get(leftTemp)) + rightTemp);
+      pw.println(ji.storeInstr(ji.curFunction.temporaries.get(leftTemp)) + leftTemp);
+      break;
+    case OP_TO_ARRAY:
+      // leftTemp[indexTemp] = rightTemp
+      pw.println("aload " + leftTemp);
+      pw.println("iload " + indexTemp);
+      pw.println(ji.loadInstr(ji.curFunction.temporaries.get(rightTemp)) + rightTemp);
+      pw.println(ji.storeInstr(ji.curFunction.temporaries.get(leftTemp)));
+      break;
+    case ARRAY_TO_OP:
+      // leftTemp = rightTemp[indexTemp]
+      pw.println("aload " + rightTemp);
+      pw.println("iload " + indexTemp);
+      pw.println(ji.loadInstr(ji.curFunction.temporaries.get(rightTemp)));
+      pw.println(ji.storeInstr(ji.curFunction.temporaries.get(leftTemp)) + leftTemp);
       break;
     }
   }
@@ -158,7 +247,8 @@ public class IRAssignInstruction extends IRInstruction{
       repr += "T";
       repr += leftTemp;
       repr += " := ";
-      repr += constant.toString();
+      String constString = constant.toString();
+      repr += constString;
       break;
     case OP_TO_ARRAY:
       repr += "T";
