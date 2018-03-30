@@ -4,8 +4,11 @@ FUNC foo (I I )I
   TEMP 0:I;
   TEMP 1:I;
   TEMP 2:I;
+  TEMP 3:I;
   T2 := T0 I+ T1;
   RETURN T2;
+  T3 := 0;
+  RETURN T3;
 }
 FUNC main ()V
 {

@@ -12,6 +12,7 @@ FUNC factorial (I )I
   TEMP 8:F;
   TEMP 9:I;
   TEMP 10:I;
+  TEMP 11:I;
   T2 := 1;
   T3 := T0 I== T2;
   T4 := Z! T3;
@@ -27,6 +28,8 @@ L0:;
   T1 := T10;
 L1:;
   RETURN T1;
+  T11 := 0;
+  RETURN T11;
 }
 FUNC main ()V
 {

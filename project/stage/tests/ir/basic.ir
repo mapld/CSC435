@@ -2,8 +2,11 @@ PROG basic
 FUNC foo ()I
 {
   TEMP 0:I;
+  TEMP 1:I;
   T0 := 1;
   RETURN T0;
+  T1 := 0;
+  RETURN T1;
 }
 FUNC main ()V
 {

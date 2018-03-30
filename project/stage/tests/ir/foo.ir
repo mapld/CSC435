@@ -12,6 +12,7 @@ FUNC foo (I I )I
   TEMP 8:U;
   TEMP 9:F;
   TEMP 10:I;
+  TEMP 11:I;
   T5 := NEWARRAY I 3;
   T6 := 'A';
   T4 := T6;
@@ -24,6 +25,8 @@ FUNC foo (I I )I
   T1 := T0;
   T10 := 8;
   RETURN T10;
+  T11 := 0;
+  RETURN T11;
 }
 FUNC main ()V
 {

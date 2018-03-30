@@ -4,9 +4,12 @@ FUNC func (AI )I
   TEMP 0:AI;
   TEMP 1:I;
   TEMP 2:I;
+  TEMP 3:I;
   T1 := 5;
   T2 := T0[T1];
   RETURN T2;
+  T3 := 0;
+  RETURN T3;
 }
 FUNC main ()V
 {

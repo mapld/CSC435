@@ -1,0 +1,19 @@
+PROG aab
+FUNC main ()V
+{
+  RETURN;
+}
+FUNC foo1 (F )I
+{
+  TEMP 0:F;
+  TEMP 1:I;
+  T1 := 0;
+  RETURN T1;
+}
+FUNC foo2 (F )I
+{
+  TEMP 0:F;
+  TEMP 1:I;
+  T1 := 0;
+  RETURN T1;
+}

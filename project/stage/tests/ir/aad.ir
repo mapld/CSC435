@@ -1,0 +1,54 @@
+PROG aad
+FUNC main ()V
+{
+  TEMP 0:Z;
+  TEMP 1:I;
+  TEMP 2:F;
+  TEMP 3:I;
+  TEMP 4:Z;
+  TEMP 5:Z;
+  TEMP 6:U;
+  TEMP 7:Z;
+  TEMP 8:Z;
+  TEMP 9:U;
+  TEMP 10:Z;
+  TEMP 11:I;
+  TEMP 12:U;
+  TEMP 13:F;
+  T3 := 5;
+  T1 := T3;
+  T4 := TRUE;
+  T5 := Z! T4;
+  IF T5 GOTO L0;
+  T6 := "true if statement";
+  PRINTU T6;
+L0:;
+  T7 := TRUE;
+  T0 := T7;
+L1:;
+  T8 := Z! T0;
+  IF T8 GOTO L2;
+  T9 := "looping while once";
+  PRINTU T9;
+  T10 := FALSE;
+  T0 := T10;
+  GOTO L1;
+L2:;
+  T11 := 5;
+  PRINTI T11;
+  T12 := "new line";
+  PRINTLNU T12;
+  T13 := I2F T1;
+  T2 := T13;
+  RETURN;
+}
+FUNC foo ()F
+{
+  TEMP 0:I;
+  TEMP 1:I;
+  TEMP 2:F;
+  T1 := 5;
+  T0 := T1;
+  T2 := I2F T0;
+  RETURN T2;
+}

@@ -1,0 +1,25 @@
+PROG aaf
+FUNC main ()V
+{
+  TEMP 0:I;
+  TEMP 1:I;
+  TEMP 2:I;
+  TEMP 3:I;
+  TEMP 4:F;
+  TEMP 5:F;
+  T2 := 3;
+  T0 := T2;
+  T3 := 4;
+  T1 := T3;
+  T5 := I2F T1;
+  CALL foo(T0 T5 );
+  RETURN;
+}
+FUNC foo (I F )V
+{
+  TEMP 0:I;
+  TEMP 1:F;
+  PRINTI T0;
+  PRINTF T1;
+  RETURN;
+}

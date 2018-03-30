@@ -2,8 +2,9 @@
 .super java/lang/Object
 
 .method public static foo()I
-.limit locals 1
+.limit locals 2
 .var 0 is T0 I from L_0 to L_1
+.var 1 is T1 I from L_0 to L_1
 .limit stack 16
 L_0:
 ;   T0 := 1
@@ -11,6 +12,12 @@ ldc 1
 istore 0
 ;   RETURN T0
 iload 0
+ireturn
+;   T1 := 0
+ldc 0
+istore 1
+;   RETURN T1
+iload 1
 ireturn
 L_1:
 .end method

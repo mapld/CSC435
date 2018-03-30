@@ -1,17 +1,17 @@
-float[5] bah(int a, float b, char c, string e, boolean f){
-}
-
 int foo(){
   int bar;
   float foo;
   string[5] foobar;
+  bar = 5;
   println "foo";
+  return bar;
 }
 
-int doThing(int one, float two){
+void doThing(int one, float two){
   print one;
   print " ";
   print two;
+  return;
 }
 
 void main(){

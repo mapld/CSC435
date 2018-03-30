@@ -4,6 +4,7 @@ void main(){
   int[10] foobar;
   int[10] barfoo;
 
+ foo = 4;
   foobar = barfoo;
 
   bar = foo < 5;

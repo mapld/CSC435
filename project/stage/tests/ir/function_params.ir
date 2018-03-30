@@ -7,6 +7,7 @@ FUNC func (I F C U )I
   TEMP 3:U;
   TEMP 4:I;
   TEMP 5:I;
+  TEMP 6:I;
   PRINTLNI T0;
   PRINTLNF T1;
   PRINTLNC T2;
@@ -14,6 +15,8 @@ FUNC func (I F C U )I
   T4 := T0 I* T0;
   T5 := T4 I+ T0;
   RETURN T5;
+  T6 := 0;
+  RETURN T6;
 }
 FUNC main ()V
 {

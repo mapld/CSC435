@@ -121,13 +121,20 @@ public class IRAssignInstruction extends IRInstruction{
       break;
     case EQUALS:
       {
-      pw.println(ji.loadInstr(opType) + leftTemp);
-      pw.println(ji.loadInstr(opType) + rightTemp);
-      cSubInstr(pw,ji,opType);
+      
+      if(opType.baseType == IRBaseTypes.STRING){
+          pw.println("aload " + leftTemp);
+          pw.println("aload " + rightTemp);
+          pw.println("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+      }
+      else{
+          pw.println(ji.loadInstr(opType) + leftTemp);
+          pw.println(ji.loadInstr(opType) + rightTemp);
+          cSubInstr(pw,ji,opType);
+      }
 
       int firstLabel = ji.getLabel();
       int secondLabel = ji.getLabel();
-
       pw.println("ifeq " + ji.jLabel(firstLabel));
       pw.println(ji.loadConstInstr(0));
       pw.println("goto " + ji.jLabel(secondLabel));
@@ -139,10 +146,23 @@ public class IRAssignInstruction extends IRInstruction{
       break;
     case PLUS:
       {
-        pw.println(ji.loadInstr(opType) + leftTemp);
-        pw.println(ji.loadInstr(opType) + rightTemp);
-        pw.println(ji.addInstr(opType));
-        pw.println(ji.storeInstr(opType) + indexTemp);
+        if(opType.baseType == IRBaseTypes.STRING){
+            pw.println("new java/lang/StringBuffer");
+            pw.println("dup");
+            pw.println("invokenonvirtual java/lang/StringBuffer/<init>()V");
+            pw.println(ji.loadInstr(opType) + leftTemp);
+            pw.println("invokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+            pw.println(ji.loadInstr(opType) + rightTemp);
+            pw.println("invokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+            pw.println("invokevirtual java/lang/StringBuffer/toString()Ljava/lang/String;");
+            pw.println(ji.storeInstr(opType) + indexTemp);
+        }
+        else{
+            pw.println(ji.loadInstr(opType) + leftTemp);
+            pw.println(ji.loadInstr(opType) + rightTemp);
+            pw.println(ji.addInstr(opType));
+            pw.println(ji.storeInstr(opType) + indexTemp);
+        }
       }
       break;
     case MINUS:
@@ -209,12 +229,23 @@ public class IRAssignInstruction extends IRInstruction{
       break;
     case NEWARRAY:
       pw.println(ji.loadConstInstr(size));
-      pw.println("newarray " + ji.getArrayType(opType));
+      if(opType.isArray || opType.baseType == IRBaseTypes.STRING){
+          pw.println("anewarray " + ji.getArrayType(opType));
+      }
+      else{
+          pw.println("newarray " + ji.getArrayType(opType));
+      }
       pw.println("astore " + leftTemp);
       break;
     case OP_TO_OP:
-      pw.println(ji.loadInstr(ji.curFunction.temporaries.get(leftTemp)) + rightTemp);
-      pw.println(ji.storeInstr(ji.curFunction.temporaries.get(leftTemp)) + leftTemp);
+      if(ji.curFunction.temporaries.get(leftTemp).isArray){
+          pw.println("aload " + rightTemp);
+          pw.println("aload " + leftTemp);
+      }
+      else{
+          pw.println(ji.loadInstr(ji.curFunction.temporaries.get(leftTemp)) + rightTemp);
+          pw.println(ji.storeInstr(ji.curFunction.temporaries.get(leftTemp)) + leftTemp);
+      }
       break;
     case OP_TO_ARRAY:
       // leftTemp[indexTemp] = rightTemp

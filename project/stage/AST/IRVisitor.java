@@ -12,6 +12,7 @@ public class IRVisitor implements Visitor{
   Map<String, IRType> functionTypeTable;
   IR ir;
   String progName;
+  IRType curFunctionReturnType;
 
   public IRVisitor(String progName){
     this.progName = progName;
@@ -47,10 +48,18 @@ public class IRVisitor implements Visitor{
       IRReturnInstruction returnInst = new IRReturnInstruction();
       ir.addInstruction(returnInst);
     }
+    if(functionTypeTable.get(f.functionDecl.id.name).baseType == IRBaseTypes.INT){
+      int tempNum = ir.getTemporary(new IRType(IRBaseTypes.INT,false));
+      IRAssignInstruction ci = AssignmentFactory.createConstantAssignment(tempNum, new IntegerLiteral(0,0,0));
+      IRReturnInstruction returnInst = new IRReturnInstruction(tempNum);
+      ir.addInstruction(ci);
+      ir.addInstruction(returnInst);
+    }
     return null;
   }
   public Object visit(FunctionDecl fd){
     IRType irType = (IRType)fd.type.accept(this);
+    curFunctionReturnType = irType;
     // System.out.println(irType);
     ir.startFunction(fd.id.name, irType);
 
@@ -203,10 +212,20 @@ public class IRVisitor implements Visitor{
   }
   public Object visit(ReturnStatement returnStatement){
     int returnOperand = -1;
+    IRType returnType;
     if(returnStatement.expr != null){
       returnOperand = (Integer)returnStatement.expr.accept(this);
+      returnType = ir.getTemporaryType(returnOperand);
+      if(returnType.baseType == IRBaseTypes.INT && curFunctionReturnType.baseType == IRBaseTypes.FLOAT){
+           int assignTemp = ir.getTemporary(IRBaseTypes.FLOAT);
+           IRAssignInstruction convertInst = AssignmentFactory.createConversion(returnType, curFunctionReturnType, returnOperand, assignTemp);
+           ir.addInstruction(convertInst);
+           returnOperand = assignTemp;
+      }
+
     }
-    // IRType returnType = ir.getTemporaryType(returnOperand);
+
+    
     IRReturnInstruction returnInst;
     if(returnOperand >= 0){
       returnInst = new IRReturnInstruction(returnOperand);

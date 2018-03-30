@@ -84,7 +84,7 @@ public class IR{
           IRType type = function.temporaries.get(tIndex);
           typeList += jasminInfo.getTypeStringUpper(type);
         }
-        pw.println(".method public static " + fname + "(" + typeList + ")" + function.returnType.toString());
+        pw.println(".method public static " + fname + "(" + typeList + ")" + jasminInfo.getTypeStringUpper(function.returnType));
 
         int startLabel = jasminInfo.labelCount;
         jasminInfo.labelCount += 2;

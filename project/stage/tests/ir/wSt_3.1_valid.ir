@@ -43,7 +43,9 @@ FUNC foo ()F
 {
   TEMP 0:I;
   TEMP 1:I;
+  TEMP 2:F;
   T1 := 5;
   T0 := T1;
-  RETURN T0;
+  T2 := I2F T0;
+  RETURN T2;
 }

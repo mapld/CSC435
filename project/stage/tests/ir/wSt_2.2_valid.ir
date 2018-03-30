@@ -28,9 +28,12 @@ FUNC sum (I I I )I
   TEMP 1:I;
   TEMP 2:I;
   TEMP 3:I;
+  TEMP 4:I;
   T3 := T0 I+ T1;
   T2 := T3;
   RETURN T2;
+  T4 := 0;
+  RETURN T4;
 }
 FUNC mult (I I )I
 {
@@ -38,7 +41,10 @@ FUNC mult (I I )I
   TEMP 1:I;
   TEMP 2:I;
   TEMP 3:I;
+  TEMP 4:I;
   T3 := T0 I* T1;
   T2 := T3;
   RETURN T2;
+  T4 := 0;
+  RETURN T4;
 }

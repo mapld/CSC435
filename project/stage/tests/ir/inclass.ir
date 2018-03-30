@@ -3,12 +3,15 @@ FUNC foo (Z )V
 {
   TEMP 0:Z;
   TEMP 1:I;
-  TEMP 2:Z;
-  TEMP 3:I;
-  T2 := Z! T0;
-  IF T2 GOTO L0;
-  T3 := 9;
-  T1 := T3;
+  TEMP 2:I;
+  TEMP 3:Z;
+  TEMP 4:I;
+  T2 := 5;
+  T1 := T2;
+  T3 := Z! T0;
+  IF T3 GOTO L0;
+  T4 := 9;
+  T1 := T4;
 L0:;
   PRINTLNI T1;
   RETURN;

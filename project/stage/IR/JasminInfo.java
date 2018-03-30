@@ -21,6 +21,9 @@ public class JasminInfo{
       if(type.baseType == IRBaseTypes.BOOLEAN){
         return "boolean";
       }
+      if(type.baseType == IRBaseTypes.STRING){
+        return "java/lang/String";
+      }
       return "";
   }
 

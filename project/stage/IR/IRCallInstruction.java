@@ -24,7 +24,12 @@ public class IRCallInstruction extends IRInstruction{
     IRType returnType = ji.functionTypeMap.get(functionName);
     for(Integer operand : operands){
       IRType curType = ji.curFunction.temporaries.get(operand);
-      pw.println(ji.loadInstr(curType) + operand);
+      if(curType.isArray){
+          pw.println("aload " + operand);
+      }
+      else{
+          pw.println(ji.loadInstr(curType) + operand);
+      }
       paramTypes += ji.getTypeStringUpper(curType);
     }
     pw.println("invokestatic " + ji.className + "/" + functionName + "(" + paramTypes + ")"

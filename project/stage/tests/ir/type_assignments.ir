@@ -6,12 +6,15 @@ FUNC main ()V
   TEMP 2:AI;
   TEMP 3:AI;
   TEMP 4:I;
-  TEMP 5:Z;
+  TEMP 5:I;
+  TEMP 6:Z;
   T2 := NEWARRAY I 10;
   T3 := NEWARRAY I 10;
+  T4 := 4;
+  T0 := T4;
   T2 := T3;
-  T4 := 5;
-  T5 := T0 I< T4;
-  T1 := T5;
+  T5 := 5;
+  T6 := T0 I< T5;
+  T1 := T6;
   RETURN;
 }
